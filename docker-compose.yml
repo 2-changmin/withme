@@ -1,0 +1,19 @@
+# 로컬 개발용 PostgreSQL. 처음 띄울 때 supabase/migrations의 SQL을 실행한다.
+# 마이그레이션을 고친 뒤 다시 적용하려면: docker compose down -v && docker compose up -d
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54322:5432"
+    volumes:
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      retries: 15
+
+volumes:
+  db-data:

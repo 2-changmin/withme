@@ -66,7 +66,7 @@
 
 모든 테이블에 RLS를 걸고 CI에서 검사한다. 이미지와 GLB는 비공개 버킷에 저장하고 짧은 만료 서명 URL로만 내려준다.
 
-## 캐릭터 데이터 형식 (`packages/shared/src/character.ts`)
+## 캐릭터 데이터 형식 (`backend/app/schemas.py`의 `Character`)
 
 ```json
 {
@@ -106,7 +106,7 @@
 
 ## 연결 지점 (먼저 올릴 것)
 
-제공자는 마감일까지 `packages/shared`에 zod 스키마를 먼저 올린다. 구현 전에는 목(mock) 응답으로 개발한다.
+제공자는 마감일까지 `backend/app/schemas.py`에 pydantic 모델을 먼저 올린다. Unity는 `/docs`(OpenAPI)를 보고 C# DTO를 만든다. 구현 전에는 목(mock) 응답으로 개발한다.
 
 | 제공자 → 사용자 | 제공물 | 마감 |
 |---|---|---|

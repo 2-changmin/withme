@@ -29,7 +29,8 @@
 
 ## 장세찬 — 백엔드: 계정·캐릭터 API
 
-- [ ] 모노레포, Supabase 프로젝트(서울), `.env.example`, 로컬 실행 문서
+- [x] 백엔드 뼈대 (FastAPI·작업자·작업 큐·로컬 DB·테스트)
+- [ ] Supabase 프로젝트(서울) 생성, 키를 팀에 공유
 - [ ] 인증 미들웨어, `pet_id` 소유권 재검증 헬퍼, 공통 오류 규약
 - [ ] 이메일 6자리 인증 코드 로그인 (초대 전용), `docs/auth-for-unity.md`
 - [ ] `users`·`pets`·`consents` 테이블 + RLS, 프로필·동의 API
@@ -44,7 +45,7 @@
 
 **인프라 (최우선)**
 - [ ] 공용 작업 큐 (`enqueue/claim/heartbeat/complete/fail`, lease 만료 복구) (10/29)
-- [ ] **작업자 컨테이너**: Node + Blender 4.x 헤드리스 + FFmpeg, 작업 종류별 처리 함수 등록 구조 (10/29)
+- [ ] **작업자 컨테이너**: Python + Blender 4.x 헤드리스 + FFmpeg (`backend/Dockerfile.worker` 초안 있음), 작업 종류별 처리 함수 등록 구조 (10/29)
 - [ ] API·작업자 서버 배포, 에러 로그, 비밀 키 관리 (Meshy·Gemini 키는 서버에만)
 - [ ] `audit_events` 기록 헬퍼
 

@@ -67,3 +67,33 @@
 | 오류 | 잠시 불러오지 못했어요. 사진은 그대로 있어요 | 아이를 잃어버렸어요 |
 
 금지 단어: '부활', '되살렸어요', '진짜 마음을 알아냈어요', '닮음 점수 99%'
+
+## 개발 시작하기 (백엔드)
+
+필요한 것: Python 3.12 이상, Docker Desktop
+
+```bash
+# 1. 로컬 DB 띄우기 (supabase/migrations가 자동 적용됨)
+docker compose up -d
+
+# 2. 백엔드 설치
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env
+
+# 3. API 서버 → http://localhost:8000/docs 에서 API 문서 확인
+uvicorn app.api.main:app --reload
+
+# 4. 작업자 (다른 터미널)
+python -m app.worker.main
+
+# 5. 테스트·린트
+pytest
+ruff check app tests
+```
+
+로컬에서는 `AUTH_DEV_BYPASS=true`라서 `X-Dev-User: <아무 UUID>` 헤더로 로그인 없이 API를 호출할 수 있다. 캐릭터 API는 지금 목 응답을 돌려준다 (`MOCK_CHARACTER=true`).
+
+**작업자 처리 함수 담당**: `backend/app/worker/handlers/`의 파일마다 담당자와 이슈 번호가 적혀 있다. 자기 파일의 `handle()`만 구현하면 큐와 재시도는 공통 코드가 처리한다.
