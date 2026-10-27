@@ -1,0 +1,117 @@
+# 04. 백엔드 API와 데이터
+
+담당: **장세찬**(계정·캐릭터 쪽 API), **박재현**(미디어·작업 큐·작업자 실행 환경·앨범·소리)
+
+생성과 리깅은 수 분씩 걸리므로 모두 **작업 큐의 비동기 작업**으로 처리하고, 앱은 `GET /jobs/:id`를 3초마다 조회한다. 생성 요청은 모두 idempotency key를 받아 중복 청구를 막는다.
+
+## API
+
+### 계정·프로필 — 장세찬
+
+| API | 하는 일 |
+|---|---|
+| `POST /auth/*` | Supabase 인증 코드 로그인 (앱이 Supabase REST 직접 호출, 서버는 토큰 검증) |
+| `POST /pets`, `PATCH /pets/:id` | 반려견 프로필 생성·수정 |
+| `POST /pets/:id/consents` | 동의 기록 (Gemini·Meshy 전달 포함) |
+
+### 캐릭터 생성 — 장세찬
+
+| API | 하는 일 |
+|---|---|
+| `POST /pets/:id/reference-views` | 원본 사진으로 4면 이미지 생성 작업 시작 → `jobId` |
+| `POST /reference-views/:id/retry` | 4면 재생성 (최대 3회) |
+| `POST /reference-views/:id/approve` | 4면 확인 → 3D 생성 작업 시작 → `jobId` |
+| `GET /character-models/:id/joints` | 자동 추정한 관절 좌표 |
+| `POST /character-models/:id/rig` | 보정된 관절 좌표로 리깅 작업 시작 → `jobId` |
+| `POST /pets/:id/character-versions` | 외형 수정값 저장 (저장할 때마다 새 버전) |
+| `POST /pets/:id/character-approvals` | 명시적 확정. 확정 전에는 방 진입 API가 막힘 |
+| `PUT /pets/:id/preferences` | 습관 설정 |
+
+### 미디어·작업·앨범·소리 — 박재현
+
+| API | 하는 일 |
+|---|---|
+| `POST /pets/:id/uploads` | 업로드 URL 발급 (형식·용량·잔여 용량 확인) |
+| `POST /media/:id/finalize` | 업로드 완료 → 검사 작업 등록 |
+| `GET /jobs/:id` | 작업 상태·진행률·결과 URL |
+| `GET/POST/PATCH/DELETE /memories` | 추억 앨범 |
+| `GET /pets/:id/sounds`, `PATCH /sounds/:id` | 잘린 소리 조각 조회, 보호자 태그 수정·빼기 |
+
+## 작업 종류 (작업 큐) — 박재현
+
+| 종류 | 처리 코드 담당 | 하는 일 |
+|---|---|---|
+| `media_check` | 박재현 | 파일 시그니처·디코딩 확인, 썸네일, 회전 보정, 위치 메타데이터 제거 |
+| `reference_views` | 윤승희 | Gemini로 4면 이미지 생성 → 버킷 저장 |
+| `meshy_generate` | 이창민 | Meshy 3D 생성 → GLB 버킷 복사 → Meshy 작업 삭제 |
+| `mesh_prepare` | 황세인 | Blender로 메시 정리 + 관절 자동 추정 |
+| `rig` | 황세인 | Blender로 자동 리깅 → 리깅 GLB 저장 |
+| `sound_split` | 박재현 | FFmpeg로 오디오 추출, `silencedetect`로 조각 분할 |
+
+박재현은 큐(`enqueue/claim/heartbeat/complete/fail`, lease 만료 복구)와 **Blender가 들어간 작업자 컨테이너**를 만들고, 각 담당자는 자기 작업 종류의 처리 함수만 작성한다.
+
+## 테이블
+
+| 테이블 | 주요 컬럼 | 소유자 |
+|---|---|---|
+| `users`, `pets`, `consents` | 프로필, 동의 항목·시각 | 장세찬 |
+| `reference_views` | `pet_id`, `source_media_ids[]`, `view_media_ids[4]`, `attempt`(1~3), `status` | 장세찬 |
+| `character_models` | `pet_id`, `reference_view_id`, `meshy_task_id`, `raw_glb_path`, `prepared_glb_path`, `joints_auto`, `joints_final`, `rigged_glb_path`, `skeleton_version`, `status` | 장세찬 |
+| `character_versions` | `pet_id`, `character_json`, `approved_at` | 장세찬 |
+| `preferences` | 반기는 방식, 자는 자세, 선호 장난감, 활동성 | 장세찬 |
+| `media_assets` | `source_type`, `parent_id`, 경로, 상태 | 박재현 |
+| `memories` | 글 원문, 연결 미디어, `linked_object` | 박재현 |
+| `sound_clips` | 원본 미디어, 구간, 태그(짖음·낑낑·하울링·기타) | 박재현 |
+| `jobs`, `audit_events` | 작업 큐, 감사 로그 | 박재현 |
+
+모든 테이블에 RLS를 걸고 CI에서 검사한다. 이미지와 GLB는 비공개 버킷에 저장하고 짧은 만료 서명 URL로만 내려준다.
+
+## 캐릭터 데이터 형식 (`packages/shared/src/character.ts`)
+
+```json
+{
+  "modelRef": "character_models/<id>",
+  "skeletonVersion": 1,
+  "params": {
+    "earScale": 1.0, "earAngle": 0,
+    "tailScale": 1.0, "legLength": 1.0, "bodyLength": 1.0, "headScale": 1.0,
+    "hueShift": 0, "brightness": 0,
+    "accessory": "collar_red"
+  }
+}
+```
+
+## 관절 데이터 형식
+
+```json
+{
+  "skeletonVersion": 1,
+  "space": "normalized",
+  "joints": {
+    "nose":       [0.00, 0.42, 0.61],
+    "neck":       [0.00, 0.40, 0.38],
+    "tail_base":  [0.00, 0.37, -0.35],
+    "tail_tip":   [0.00, 0.48, -0.58],
+    "front_paw_l":[0.09, 0.00, 0.30],
+    "shoulder_l": [0.08, 0.30, 0.30],
+    "hind_paw_l": [0.09, 0.00, -0.28],
+    "hip_l":      [0.08, 0.31, -0.27],
+    "ear_tip_l":  [0.07, 0.62, 0.45],
+    "ear_base_l": [0.05, 0.52, 0.42]
+  }
+}
+```
+
+좌표는 정리된 메시 기준(정면 +Z, 바닥 y=0, 키 1로 정규화)이다. 오른쪽 관절은 x를 뒤집어 만든다.
+
+## 연결 지점 (먼저 올릴 것)
+
+제공자는 마감일까지 `packages/shared`에 zod 스키마를 먼저 올린다. 구현 전에는 목(mock) 응답으로 개발한다.
+
+| 제공자 → 사용자 | 제공물 | 마감 |
+|---|---|---|
+| 황세인 → 장세찬 | 관절 JSON 형식, 표준 뼈대 규격 | 10/28 |
+| 박재현 → 전원 | 작업 큐 인터페이스, 작업자 컨테이너, 서버 주소 | 10/29 |
+| 장세찬 → 황세인 | 로그인 순서·오류 코드 문서, 캐릭터 생성 API 목 응답 | 10/29 |
+| 윤승희·이창민 → 박재현 | 작업 처리 함수 (`reference_views`, `meshy_generate`) | 10/31 |
+| 박재현 → 황세인 | 업로드·앨범·소리 API | 11/01 |
