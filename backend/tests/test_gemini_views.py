@@ -26,12 +26,16 @@ def fake_client(**kw):
     return SimpleNamespace(models=FakeModels(**kw))
 
 
+# 검출 모델·이미지 검사 없이 순서만 본다
+NO_PREP = {"prep": lambda d: (d, "image/jpeg"), "check": lambda d: []}
+
+
 def test_side_first_then_three_views_reference_side():
     client = fake_client()
     sources = [(b"a", "image/jpeg"), (b"b", "image/jpeg")]
     seen = []
 
-    out = gemini_views.generate_views(sources, seen.append, client=client)
+    out, problems = gemini_views.generate_views(sources, seen.append, client=client, **NO_PREP)
 
     assert list(out) == list(gemini_views.VIEWS)
     calls = client.models.calls
@@ -41,6 +45,21 @@ def test_side_first_then_three_views_reference_side():
         assert len(c) == 4                         # 원본 2장 + 기준 옆모습 + 프롬프트
         assert c[2].inline_data.data == b"img1"    # 기준 옆모습을 참조로 넣음
     assert seen == [25, 50, 75, 100]
+    assert problems == {}
+
+
+def test_failed_check_regenerates_once_then_reports():
+    client = fake_client()
+    # side는 첫 결과만 실패, front는 두 번 다 실패
+    bad = {b"img1", b"img3", b"img4"}
+    check = lambda d: ["다리가 서로 붙어 보임"] if d in bad else []
+
+    out, problems = gemini_views.generate_views(
+        [(b"a", "image/jpeg")], client=client, prep=NO_PREP["prep"], check=check)
+
+    assert len(client.models.calls) == 6          # 4면 + side 재시도 1 + front 재시도 1
+    assert out["side"][0] == b"img2"              # 재시도 결과를 기준으로 씀
+    assert problems == {"front": ["다리가 서로 붙어 보임"]}
 
 
 def test_rejects_source_count():
@@ -55,7 +74,8 @@ def test_rejects_source_count():
 def test_api_errors_map_to_retry_or_not(status, code):
     err = errors.APIError(status, {"error": {"message": "x", "status": "X"}})
     with pytest.raises(AppError) as e:
-        gemini_views.generate_views([(b"a", "image/jpeg")], client=fake_client(fail_with=err))
+        gemini_views.generate_views([(b"a", "image/jpeg")], client=fake_client(fail_with=err),
+                                    **NO_PREP)
     assert e.value.code == code
 
 
@@ -63,5 +83,6 @@ def test_mock_mode_does_not_call_gemini(monkeypatch):
     monkeypatch.setattr(gemini_views, "get_settings",
                         lambda: SimpleNamespace(mock_gemini=True))
     src = (b"photo", "image/jpeg")
-    out = gemini_views.generate_views([src])
+    out, problems = gemini_views.generate_views([src])
     assert out == dict.fromkeys(gemini_views.VIEWS, src)
+    assert problems == {}
