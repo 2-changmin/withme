@@ -57,3 +57,11 @@ def test_api_errors_map_to_retry_or_not(status, code):
     with pytest.raises(AppError) as e:
         gemini_views.generate_views([(b"a", "image/jpeg")], client=fake_client(fail_with=err))
     assert e.value.code == code
+
+
+def test_mock_mode_does_not_call_gemini(monkeypatch):
+    monkeypatch.setattr(gemini_views, "get_settings",
+                        lambda: SimpleNamespace(gemini_mock=True))
+    src = (b"photo", "image/jpeg")
+    out = gemini_views.generate_views([src])
+    assert out == dict.fromkeys(gemini_views.VIEWS, src)

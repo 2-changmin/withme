@@ -7,6 +7,7 @@
   cd backend && .venv/bin/python -m app.worker.gemini_views dog1.jpg dog2.jpg -o out/
 """
 import argparse
+import logging
 import mimetypes
 from collections.abc import Callable
 from pathlib import Path
@@ -16,6 +17,8 @@ from google.genai import errors, types
 
 from app.config import get_settings
 from app.errors import AppError, ErrorCode
+
+log = logging.getLogger(__name__)
 
 Image = tuple[bytes, str]  # (데이터, MIME)
 
@@ -94,6 +97,10 @@ def generate_views(sources: list[Image], progress: Callable[[int], None] = lambd
     """원본 1~4장 → {"side", "front", "back", "other"} 이미지."""
     if not 1 <= len(sources) <= 4:
         raise AppError(ErrorCode.VALIDATION_FAILED, "원본 사진은 1~4장입니다")
+    if client is None and get_settings().gemini_mock:
+        log.warning("GEMINI_MOCK=true: Gemini를 부르지 않고 원본 사진을 4면 결과로 돌려줍니다")
+        progress(100)
+        return dict.fromkeys(VIEWS, sources[0])
     client = client or _client()
 
     side = _generate(client, sources, SIDE_PROMPT)
@@ -113,7 +120,8 @@ def _main() -> None:
 
     sources = [(f.read_bytes(), mimetypes.guess_type(f)[0] or "image/jpeg") for f in a.photos]
     a.out.mkdir(parents=True, exist_ok=True)
-    print(f"모델: {get_settings().gemini_image_model}")
+    s = get_settings()
+    print("모의 모드 (GEMINI_MOCK=true)" if s.gemini_mock else f"모델: {s.gemini_image_model}")
     for view, (data, mime) in generate_views(sources, lambda n: print(f"  {n}%")).items():
         path = a.out / f"{view}{mimetypes.guess_extension(mime) or '.png'}"
         path.write_bytes(data)

@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     # 이미지 모델 ID는 자주 바뀐다. 최신 ID는 ai.google.dev 모델 목록에서 확인 (#38)
     gemini_image_model: str = "gemini-2.5-flash-image"
+    # true면 Gemini를 부르지 않고 원본 사진을 그대로 4면 결과로 돌려준다 (비용 0).
+    # 실제로 돌려 볼 사람만 자기 .env에서 false로 바꾼다.
+    gemini_mock: bool = True
     meshy_api_key: str = ""
 
     # 작업자
