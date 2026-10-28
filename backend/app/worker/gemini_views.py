@@ -36,7 +36,9 @@ _STYLE = (
 # 자동 리깅 조건: 네 다리가 서로 떨어짐, 꼬리가 몸에서 떨어짐, 입 닫힘
 _POSE = (
     "Standing on all four legs, legs straight and slightly apart so no two legs touch, "
-    "tail extended away from the body, mouth closed, neutral pose."
+    "Tail raised up and held out behind the body as the dog would when alert and happy, "
+    "with a clear gap of white background between the tail and the hind legs, rump and back; "
+    "the tail must not hang down or touch any leg. Mouth closed, neutral pose."
 )
 SIDE_PROMPT = (
     "Same dog as in the reference photos. Keep exact fur color, markings, ear shape, and face. "
