@@ -96,4 +96,6 @@ ruff check app tests
 
 로컬에서는 `AUTH_DEV_BYPASS=true`라서 `X-Dev-User: <아무 UUID>` 헤더로 로그인 없이 API를 호출할 수 있다. 캐릭터 API는 지금 목 응답을 돌려준다 (`MOCK_CHARACTER=true`).
 
+**외부 API 비용**: 유료 API를 부르는 작업은 `MOCK_서비스명` 스위치를 두고 기본값을 `true`(호출 안 함)로 한다. 자기 담당 부분을 실제로 테스트할 때만 자기 `.env`에서 `false`로 바꾼다. 지금은 `MOCK_MESHY`가 있다.
+
 **작업자 처리 함수 담당**: `backend/app/worker/handlers/`의 파일마다 담당자와 이슈 번호가 적혀 있다. 자기 파일의 `handle()`만 구현하면 큐와 재시도는 공통 코드가 처리한다.

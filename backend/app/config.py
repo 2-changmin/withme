@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # 외부 API (작업자 전용)
     gemini_api_key: str = ""
     meshy_api_key: str = ""
+    # Meshy를 부르지 않고 가짜 결과를 돌려준다 (크레딧 절약). 실제 생성이 필요할 때만 false.
+    mock_meshy: bool = True
 
     # 작업자
     worker_id: str = "worker-local"
