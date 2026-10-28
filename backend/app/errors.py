@@ -2,12 +2,15 @@
 
 Unity는 code를 보고 화면 문구를 고른다. message는 개발자 확인용이다.
 """
+import logging
 from enum import StrEnum
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
+logger = logging.getLogger(__name__)
 
 
 class ErrorCode(StrEnum):
@@ -35,6 +38,9 @@ STATUS = {
 }
 
 
+_CODE_BY_STATUS = {status: code for code, status in STATUS.items()}
+
+
 class AppError(Exception):
     def __init__(self, code: ErrorCode, message: str = ""):
         super().__init__(message or code)
@@ -57,5 +63,11 @@ def install_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(StarletteHTTPException)
     async def http_error(_: Request, e: StarletteHTTPException):
-        code = ErrorCode.NOT_FOUND if e.status_code == 404 else ErrorCode.INTERNAL
+        code = _CODE_BY_STATUS.get(e.status_code, ErrorCode.INTERNAL)
         return JSONResponse(_body(code, str(e.detail)), status_code=e.status_code)
+
+    @app.exception_handler(Exception)
+    async def unhandled_error(_: Request, e: Exception):
+        # 내부 사정(SQL, 경로 등)은 응답에 싣지 않는다. 원인은 서버 로그로 확인한다.
+        logger.exception("처리하지 못한 오류")
+        return JSONResponse(_body(ErrorCode.INTERNAL, "서버 오류"), status_code=500)

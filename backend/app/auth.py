@@ -31,7 +31,10 @@ def current_user(
 ) -> UUID:
     s = get_settings()
     if s.auth_dev_bypass and s.env == "local" and x_dev_user:
-        return UUID(x_dev_user)
+        try:
+            return UUID(x_dev_user)
+        except ValueError as e:
+            raise AppError(ErrorCode.UNAUTHORIZED, "X-Dev-User는 UUID여야 합니다") from e
     if not authorization or not authorization.startswith("Bearer "):
         raise AppError(ErrorCode.UNAUTHORIZED, "Bearer 토큰이 필요합니다")
     try:
