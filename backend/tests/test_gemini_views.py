@@ -61,7 +61,7 @@ def test_api_errors_map_to_retry_or_not(status, code):
 
 def test_mock_mode_does_not_call_gemini(monkeypatch):
     monkeypatch.setattr(gemini_views, "get_settings",
-                        lambda: SimpleNamespace(gemini_mock=True))
+                        lambda: SimpleNamespace(mock_gemini=True))
     src = (b"photo", "image/jpeg")
     out = gemini_views.generate_views([src])
     assert out == dict.fromkeys(gemini_views.VIEWS, src)
