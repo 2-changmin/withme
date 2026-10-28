@@ -5,3 +5,7 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
+
+# Meshy 테스트용 이미지·결과 (커밋하지 않음)
+test_images/
+out/
