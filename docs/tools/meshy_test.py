@@ -1,7 +1,7 @@
 """Meshy Image-to-3D 테스트: 로컬 사진 -> GLB 다운로드
 
 사용법:
-  export MESHY_API_KEY="msy_..."
+  export MESHY_API_KEY="msy_..."   (없으면 backend/.env의 MESHY_API_KEY를 읽는다)
   python3 meshy_test.py dog.jpg [출력폴더]
 """
 import base64
@@ -14,7 +14,22 @@ import urllib.error
 import urllib.request
 
 BASE = "https://api.meshy.ai/openapi/v1/image-to-3d"
-API_KEY = os.environ.get("MESHY_API_KEY")
+ENV_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "backend", ".env")
+
+
+def load_api_key():
+    if os.environ.get("MESHY_API_KEY"):
+        return os.environ["MESHY_API_KEY"]
+    if os.path.exists(ENV_FILE):
+        with open(ENV_FILE, encoding="utf-8") as f:
+            for line in f:
+                key, _, value = line.strip().partition("=")
+                if key == "MESHY_API_KEY":
+                    return value.strip().strip('"\'')
+    return None
+
+
+API_KEY = load_api_key()
 
 
 def request(method, url, body=None):
@@ -71,13 +86,15 @@ def main():
     out_dir = sys.argv[2] if len(sys.argv) > 2 else "."
     os.makedirs(out_dir, exist_ok=True)
 
+    started = time.time()
     task_id = create_task(image_path)
     print(f"작업 생성: {task_id}")
     task = wait(task_id)
+    elapsed = time.time() - started
 
     out = os.path.join(out_dir, f"{task_id}.glb")
     urllib.request.urlretrieve(task["model_urls"]["glb"], out)
-    print(f"완료: {out} (사용 크레딧 {task.get('consumed_credits')})")
+    print(f"완료: {out} (사용 크레딧 {task.get('consumed_credits')}, 생성 시간 {elapsed:.0f}초)")
     print("미리보기:", json.dumps(task.get("thumbnail_urls"), indent=2))
 
 
