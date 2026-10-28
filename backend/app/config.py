@@ -20,6 +20,8 @@ class Settings(BaseSettings):
 
     # 외부 API (작업자 전용)
     gemini_api_key: str = ""
+    # 이미지 모델 ID는 자주 바뀐다. 최신 ID는 ai.google.dev 모델 목록에서 확인 (#38)
+    gemini_image_model: str = "gemini-2.5-flash-image"
     meshy_api_key: str = ""
 
     # 작업자
