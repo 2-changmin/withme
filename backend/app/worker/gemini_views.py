@@ -22,9 +22,13 @@ Image = tuple[bytes, str]  # (데이터, MIME)
 # 결과 순서 = reference_views.view_media_ids 순서
 VIEWS = ("side", "front", "back", "other")
 
+# 실사 사진 느낌 유지. 털이 다리를 덮으면 리깅이 깨지므로 다리 윤곽은 보이게 한다.
 _STYLE = (
-    "Soft low-poly toy style. Plain white background, even lighting, no shadow, "
-    "no text, no clothes or accessories, full body visible and centered."
+    "Photorealistic studio photograph of the real dog, natural fur texture and true colors, "
+    "same coat length and grooming as in the photos, but each leg's outline clearly visible. "
+    "Plain white background, soft even studio lighting, no shadow, no text, "
+    "no clothes or accessories, camera at the dog's height. "
+    "The whole dog is centered and fills about 80% of the image width."
 )
 # 자동 리깅 조건: 네 다리가 서로 떨어짐, 꼬리가 몸에서 떨어짐, 입 닫힘
 _POSE = (
@@ -33,12 +37,15 @@ _POSE = (
 )
 SIDE_PROMPT = (
     "Same dog as in the reference photos. Keep exact fur color, markings, ear shape, and face. "
-    f"Full body side view, facing left. {_POSE} {_STYLE}"
+    "Strict side profile: head on the LEFT side of the image, tail on the RIGHT side. "
+    "Head in line with the body, looking straight ahead toward the left edge, not at the camera. "
+    f"{_POSE} {_STYLE}"
 )
 _VIEW_TEXT = {
-    "front": "front view, facing the camera",
-    "back": "back view, seen from behind",
-    "other": "full body side view, facing right (mirror direction of the last image)",
+    "front": "straight front view, facing the camera, body symmetric",
+    "back": "straight back view seen from directly behind, head not turned",
+    "other": ("strict side profile of the dog's other side: head on the RIGHT side of the image, "
+              "tail on the LEFT side, looking straight ahead toward the right edge, not at the camera"),
 }
 
 
