@@ -17,6 +17,7 @@ from google.genai import errors, types
 
 from app.config import get_settings
 from app.errors import AppError, ErrorCode
+from app.worker import photo_prep
 
 log = logging.getLogger(__name__)
 
@@ -96,23 +97,36 @@ def _generate(client, refs: list[Image], prompt: str) -> Image:
 
 
 def generate_views(sources: list[Image], progress: Callable[[int], None] = lambda _: None,
-                   client=None) -> dict[str, Image]:
-    """원본 1~4장 → {"side", "front", "back", "other"} 이미지."""
+                   client=None, prep=photo_prep.crop_dog, check=photo_prep.check_view,
+                   ) -> tuple[dict[str, Image], dict[str, list[str]]]:
+    """원본 1~4장 → ({"side", "front", "back", "other"} 이미지, 면별 남은 문제).
+
+    원본은 반려견 영역만 잘라서 보낸다. 결과가 검사(해상도·흰 배경·다리 분리)에
+    걸리면 그 면만 1번 다시 만들고, 그래도 남은 문제는 보호자 확인 화면에 넘긴다.
+    """
     if not 1 <= len(sources) <= 4:
         raise AppError(ErrorCode.VALIDATION_FAILED, "원본 사진은 1~4장입니다")
     if client is None and get_settings().mock_gemini:
         log.warning("MOCK_GEMINI=true: Gemini를 부르지 않고 원본 사진을 4면 결과로 돌려줍니다")
         progress(100)
-        return dict.fromkeys(VIEWS, sources[0])
+        return dict.fromkeys(VIEWS, sources[0]), {}
     client = client or _client()
+    sources = [prep(data) for data, _ in sources]
 
-    side = _generate(client, sources, SIDE_PROMPT)
-    out = {"side": side}
-    progress(25)
-    for i, view in enumerate(VIEWS[1:], start=2):
-        out[view] = _generate(client, [*sources, side], view_prompt(view))
+    out: dict[str, Image] = {}
+    problems: dict[str, list[str]] = {}
+    for i, view in enumerate(VIEWS, start=1):
+        refs, prompt = (sources, SIDE_PROMPT) if view == "side" else (
+            [*sources, out["side"]], view_prompt(view))
+        for _ in range(2):  # 검사 실패 시 1번 다시
+            out[view] = _generate(client, refs, prompt)
+            if not (found := check(out[view][0])):
+                problems.pop(view, None)
+                break
+            log.warning("%s 검사 실패: %s", view, found)
+            problems[view] = found
         progress(25 * i)
-    return out
+    return out, problems
 
 
 def _main() -> None:
@@ -125,10 +139,11 @@ def _main() -> None:
     a.out.mkdir(parents=True, exist_ok=True)
     s = get_settings()
     print("모의 모드 (MOCK_GEMINI=true)" if s.mock_gemini else f"모델: {s.gemini_image_model}")
-    for view, (data, mime) in generate_views(sources, lambda n: print(f"  {n}%")).items():
+    views, problems = generate_views(sources, lambda n: print(f"  {n}%"))
+    for view, (data, mime) in views.items():
         path = a.out / f"{view}{mimetypes.guess_extension(mime) or '.png'}"
         path.write_bytes(data)
-        print(f"저장: {path}")
+        print(f"저장: {path}", f"⚠️ {problems[view]}" if view in problems else "")
 
 
 if __name__ == "__main__":
