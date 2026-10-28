@@ -45,7 +45,7 @@ Plain white background, even lighting.
 
 | 항목 | 값 |
 |---|---|
-| API | `POST https://api.meshy.ai/openapi/v1/image-to-3d` (단일) / 다중 이미지 엔드포인트 (4면) |
+| API | `POST https://api.meshy.ai/openapi/v1/multi-image-to-3d` (4면, 기본) / `POST /openapi/v1/image-to-3d` (옆모습 1장, 대체) — [결정 기록](decisions/2026-10-28-meshy-input-mode.md) |
 | 인증 | `Authorization: Bearer <MESHY_API_KEY>` (Pro 플랜 이상, 무료 플랜은 402) |
 | 입력 | 버킷의 4면 이미지 (서명 URL 또는 base64 data URI) |
 | 옵션 | `should_remesh: true`, `topology: "triangle"`, `target_polycount: 30000`, `target_formats: ["glb"]`, `should_texture: true` |
@@ -57,7 +57,7 @@ Plain white background, even lighting.
 
 **검증할 것**: 단일 옆모습 입력과 4면 입력 중 어느 쪽이 더 닮고 다리가 잘 분리되는가, 실제 소모 크레딧, 평균 생성 시간.
 
-참고 스크립트: [tools/meshy_test.py](tools/meshy_test.py) (로컬 사진 → GLB 다운로드)
+참고 스크립트: [tools/meshy_test.py](tools/meshy_test.py) (로컬 사진 1~4장 → GLB 다운로드, `--dry-run`으로 크레딧 없이 요청 확인)
 
 ## 3. 메시 정리·관절 추정 — 황세인 (Blender)
 
@@ -102,6 +102,6 @@ Plain white background, even lighting.
 | 단계 | 담당 | 입력 → 출력 | 예상 시간 | 실패 시 |
 |---|---|---|---|---|
 | 4면 이미지 | 윤승희 | 원본 1~4장 → 선 자세 PNG 4장 | 약 30초 | 재생성 (최대 3회) |
-| 3D 생성 | 이창민 | PNG 4장 → GLB | 2~5분 | 1회 재시도 → 사진 모드 안내 |
+| 3D 생성 | 이창민 | PNG 4장 → GLB | 1~4분 (실측 56~204초) | 1회 재시도 → 사진 모드 안내 |
 | 정리·관절 추정 | 황세인 | GLB → 정리된 GLB + 관절 JSON | 수 초 | 보호자가 직접 찍기 |
 | 리깅 | 황세인 | 정리된 GLB + 보정 관절 → 리깅 GLB | 10~30초 | 면 수 줄여 재시도 → 관절 재지정 |
