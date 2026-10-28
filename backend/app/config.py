@@ -31,6 +31,8 @@ class Settings(BaseSettings):
 
     # 작업자
     worker_id: str = "worker-local"
+    # 박재현 #30 비공개 버킷이 들어오기 전 임시 미디어 저장 폴더 (reference_views)
+    local_media_dir: str = ".media"
     worker_poll_seconds: float = 2.0
     worker_lease_seconds: int = 300
     blender_path: str = "blender"
