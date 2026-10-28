@@ -46,7 +46,8 @@ SIDE_PROMPT = (
 )
 _VIEW_TEXT = {
     "front": "straight front view, facing the camera, body symmetric",
-    "back": "straight back view seen from directly behind, head not turned",
+    "back": ("straight back view seen from directly behind: show the rump, tail and back of the head, "
+             "the face and eyes must NOT be visible"),
     "other": ("strict side profile of the dog's other side: head on the RIGHT side of the image, "
               "tail on the LEFT side, looking straight ahead toward the right edge, not at the camera"),
 }
