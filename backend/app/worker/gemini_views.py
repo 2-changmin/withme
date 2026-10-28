@@ -36,7 +36,9 @@ _STYLE = (
 # 자동 리깅 조건: 네 다리가 서로 떨어짐, 꼬리가 몸에서 떨어짐, 입 닫힘
 _POSE = (
     "Standing on all four legs, legs straight and slightly apart so no two legs touch, "
-    "tail extended away from the body, mouth closed, neutral pose."
+    "Tail raised up and held out behind the body as the dog would when alert and happy, "
+    "with a clear gap of white background between the tail and the hind legs, rump and back; "
+    "the tail must not hang down or touch any leg. Mouth closed, neutral pose."
 )
 SIDE_PROMPT = (
     "Same dog as in the reference photos. Keep exact fur color, markings, ear shape, and face. "
@@ -98,8 +100,8 @@ def generate_views(sources: list[Image], progress: Callable[[int], None] = lambd
     """원본 1~4장 → {"side", "front", "back", "other"} 이미지."""
     if not 1 <= len(sources) <= 4:
         raise AppError(ErrorCode.VALIDATION_FAILED, "원본 사진은 1~4장입니다")
-    if client is None and get_settings().gemini_mock:
-        log.warning("GEMINI_MOCK=true: Gemini를 부르지 않고 원본 사진을 4면 결과로 돌려줍니다")
+    if client is None and get_settings().mock_gemini:
+        log.warning("MOCK_GEMINI=true: Gemini를 부르지 않고 원본 사진을 4면 결과로 돌려줍니다")
         progress(100)
         return dict.fromkeys(VIEWS, sources[0])
     client = client or _client()
@@ -122,7 +124,7 @@ def _main() -> None:
     sources = [(f.read_bytes(), mimetypes.guess_type(f)[0] or "image/jpeg") for f in a.photos]
     a.out.mkdir(parents=True, exist_ok=True)
     s = get_settings()
-    print("모의 모드 (GEMINI_MOCK=true)" if s.gemini_mock else f"모델: {s.gemini_image_model}")
+    print("모의 모드 (MOCK_GEMINI=true)" if s.mock_gemini else f"모델: {s.gemini_image_model}")
     for view, (data, mime) in generate_views(sources, lambda n: print(f"  {n}%")).items():
         path = a.out / f"{view}{mimetypes.guess_extension(mime) or '.png'}"
         path.write_bytes(data)
