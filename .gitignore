@@ -10,3 +10,4 @@ __pycache__/
 test_images/
 out/
 .models/
+.media/
