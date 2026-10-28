@@ -48,6 +48,7 @@
 | [06-schedule.md](docs/06-schedule.md) | 일정, 10/30 관문, 일정이 밀릴 때 축소 순서 |
 | [07-cost-risk.md](docs/07-cost-risk.md) | 비용 예산, 리스크와 대응 |
 | [08-quality-ethics.md](docs/08-quality-ethics.md) | 성공 지표, 인수 테스트, 윤리·개인정보, 열린 질문 |
+| [auth-for-unity.md](docs/auth-for-unity.md) | Unity 로그인 연동: Supabase 인증 코드 요청·검증·갱신 순서, 오류 코드 |
 
 ## 반드시 지킬 제품 원칙
 
