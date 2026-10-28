@@ -1,0 +1,42 @@
+# 백엔드 린트·테스트. 마이그레이션을 빈 DB에 적용한 뒤 RLS 검사(tests/test_rls.py)를 포함해 돈다.
+name: backend
+
+on:
+  pull_request:
+    paths: ["backend/**", "supabase/**", ".github/workflows/backend.yml"]
+  push:
+    branches: [main]
+    paths: ["backend/**", "supabase/**", ".github/workflows/backend.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["54322:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-retries 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:54322/postgres
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+      - name: 마이그레이션 적용
+        run: |
+          for f in ../supabase/migrations/*.sql; do
+            echo "== $f"
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+      - run: pip install -e ".[dev]"
+      - run: ruff check app tests
+      - run: pytest -v
