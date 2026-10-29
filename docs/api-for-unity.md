@@ -109,10 +109,31 @@
 
 `Joints` 형식은 [04-api-data.md](04-api-data.md) "관절 데이터 형식"을 따른다. 좌표는 정면 +Z, 바닥 y=0, 키 1로 정규화한 값이고, 왼쪽 관절만 보낸다.
 
+### 무지개다리 편지 (#74)
+
+| API | 요청 | 응답 |
+|---|---|---|
+| `POST /pets/{petId}/letters` | `{"body": "..."}` (1~2000자) | `201 Letter`. 하루 1통, 넘으면 429 |
+| `GET /pets/{petId}/letters` | | `[Letter]` (최근 순) |
+| `GET /letters/{id}` | | `Letter`. 답장을 기다릴 때 3초마다 |
+| `DELETE /letters/{id}` | | `204` |
+
+`Letter`: `{"id", "petId", "body", "reply", "status", "jobId", "help", "notice", "createdAt", "repliedAt"}`
+
+| status | 화면 |
+|---|---|
+| `pending` | "답장을 쓰고 있어요" (`GET /letters/{id}`를 3초마다) |
+| `replied` | `reply`를 보여 주고, 아래에 **`notice`("AI가 ○○의 모습을 떠올려 쓴 답장이에요")를 항상** 함께 |
+| `crisis` | 답장 없음. **`help`(상담 전화 안내)를 그대로** 보여 준다 |
+| `failed` | "답장을 쓰지 못했어요". 오늘 횟수에 세지 않으니 다시 쓸 수 있다 |
+
+편지 화면에 "편지 글은 답장을 쓰기 위해 Google(Gemini)에 전달돼요" 안내를 정적 문구로 넣는다.
+
 ## 지금 서버 상태 (목업)
 
 서버는 외부 API 비용을 아끼려고 **목업 모드**로 돈다. 응답 형식은 실제와 같다.
 
+- `MOCK_LETTER=true`: 편지 답장은 Gemini 없이 정해진 문장으로 온다. 흐름(pending → replied)은 실제와 같다.
 - `MOCK_CHARACTER=true`: 캐릭터 생성 API가 바로 `jobId`(`mock-...`)를 주고, `GET /jobs/mock-...`는 곧바로 `succeeded`다. 4면은 자리표시 이미지, GLB는 예시 주소다.
 - 반려견·업로드 API는 실제로 동작한다 (Supabase 저장소).
 - 실제 생성(Gemini·Meshy·Blender)이 연결되면 같은 API 그대로 실제 결과가 나온다. 앱 코드는 바꾸지 않아도 된다.
@@ -120,4 +141,4 @@
 ## 없는 것
 
 - 동의 API는 없다. 외부 전송 안내는 앱 화면에 정적으로 넣는다.
-- 앨범(#31)과 버전·확정·습관(#24) API는 아직이다. 나오면 Swagger에 바로 보인다.
+- 앨범과 소리 태그는 데모 범위에서 뺐다. 버전·확정·습관(#24) API는 아직이다. 나오면 Swagger에 바로 보인다.

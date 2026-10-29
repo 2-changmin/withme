@@ -1,6 +1,6 @@
 # 무지개다리 편지 (F15 제안)
 
-- 상태: 제안 (전원 합의 후 채택. 채택 전에는 구현하지 않는다)
+- 상태: 채택 (2026-10-30, 박재현 구현 #74)
 - 날짜: 2026-10-30
 - 작성: 박재현
 - 관련: [01-features.md](../01-features.md) "하지 않는 것", [08-quality-ethics.md](../08-quality-ethics.md) 윤리와 개인정보, [Gemini 데이터 처리](2026-10-28-gemini-data-handling.md)
@@ -39,26 +39,27 @@
 
 ## 데이터·외부 전송
 
-- 편지 본문은 사진보다 민감할 수 있다. **Google(Gemini)에 편지 글이 전달된다는 별도 동의**를 받는다. 동의하지 않으면 편지는 저장만 하고 답장은 쓰지 않는다.
+- 편지 본문은 사진보다 민감할 수 있다. 서버 동의 API는 없애기로 해서(PR #77), 편지 화면에 **Google(Gemini)에 편지 글이 전달된다는 안내**를 정적 문구로 보여 준다.
 - Gemini 결정 기록의 규칙(유료 키만 사용, 로그 끄기 또는 7일, 55일 남용 감시 보관 안내)을 그대로 따른다.
 - 보내는 것: 편지 본문, 반려견 이름·습관. 보호자 이름·이메일은 보내지 않는다.
 
-## API·데이터 (초안)
+## API·데이터 (구현)
 
 | API | 내용 |
 |---|---|
-| `POST /pets/:id/letters` | 편지 저장 + `letter_reply` 작업 등록. 위기 표현이면 작업 없이 `crisis: true` |
-| `GET /pets/:id/letters` | 편지함 (편지·답장·상태) |
+| `POST /pets/:id/letters` | 편지 저장 + `letter_reply` 작업 등록. 위기 표현이면 작업 없이 `status: crisis` + 상담 안내 `help` |
+| `GET /pets/:id/letters` | 편지함 (편지·답장·상태, 최근 순) |
+| `GET /letters/:id` | 편지 하나 (답장 기다릴 때 조회) |
 | `DELETE /letters/:id` | 편지와 답장 삭제 |
 
-- `letters` 테이블: `user_id`, `pet_id`, `body`, `reply`, `status`(pending·replied·crisis·failed), `created_at`
-- 작업 `letter_reply`: Gemini 텍스트 모델 호출, 결과 검사, 실패 시 1회 재시도. `MOCK_LETTER=true`면 고정 답장
-- 동의 종류에 `gemini_letter` 추가 (F02)
+- `letters` 테이블 (`0005_letters.sql`): `user_id`, `pet_id`, `body`, `reply`, `status`(pending·replied·crisis), `job_id`, `replied_at`. 작업이 실패한 pending은 API가 `failed`로 보여 주고 하루 횟수에 세지 않는다
+- 작업 `letter_reply` (`app/worker/letter_writer.py`): Gemini 텍스트 모델(`GEMINI_TEXT_MODEL`)에 JSON(`crisis`, `reply`)으로 받는다. 금지 표현이 나오면 한 번 다시 쓰고, 또 나오면 정해진 답장. `MOCK_LETTER=true`(기본)면 정해진 답장
+- 위기 표현: API는 키워드(`app/letters.py`의 `CRISIS_KEYWORDS`), 작업자는 LLM 판단. 둘 중 하나라도 걸리면 답장 대신 상담 안내
 
 ## 열린 질문
 
-- [ ] 이 기능을 P0(11/08)에 넣을지, 다음 버전으로 둘지 — 전원
+- [x] 이 기능을 넣을지 — 박재현이 구현하기로 함 (10/30)
 - [ ] 화면 위치와 디자인 (나의 방에서 들어갈지, 별도 탭일지) — 황세인
-- [ ] 동의 문구와 상담 안내 문구 검수 — 장세찬
+- [ ] 외부 전송 안내와 상담 안내 문구 검수 — 장세찬
 - [ ] 답장 프롬프트·금지 표현 검사 — 윤승희 (Gemini 경험)
 - [ ] 위기 표현 기준을 전문가 자료로 확인 — 박재현

@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     meshy_api_key: str = ""
     # Meshy를 부르지 않고 가짜 결과를 돌려준다 (크레딧 절약). 실제 생성이 필요할 때만 false.
     mock_meshy: bool = True
+    # 무지개다리 편지 답장 (#74). true면 Gemini를 부르지 않고 정해진 답장을 쓴다.
+    mock_letter: bool = True
+    gemini_text_model: str = "gemini-2.5-flash"
 
     # 미디어 저장소 (#30). local: LOCAL_MEDIA_DIR 폴더 + API가 서명 URL 처리 (ENV=local 전용)
     # supabase: 비공개 버킷. SUPABASE_URL과 서비스 키가 필요하다.

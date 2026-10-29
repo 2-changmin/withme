@@ -35,6 +35,7 @@ def echo(ctx: JobContext) -> dict[str, Any]:
 
 # 순환 import를 피하려고 아래에서 가져온다
 from app.worker.handlers import (
+    letter_reply,
     media_check,
     mesh_prepare,
     meshy_generate,
@@ -51,4 +52,5 @@ HANDLERS: dict[str, Handler] = {
     JobType.MESH_PREPARE: mesh_prepare.handle,
     JobType.RIG: rig.handle,
     JobType.SOUND_SPLIT: sound_split.handle,
+    JobType.LETTER_REPLY: letter_reply.handle,
 }

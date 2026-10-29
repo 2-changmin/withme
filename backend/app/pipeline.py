@@ -5,6 +5,7 @@
     meshy_generate   → 원본 GLB 저장 → mesh_prepare 등록
     mesh_prepare     → 정리된 GLB·자동 관절 저장 (관절 보정은 보호자가 한다)
     rig              → 리깅 GLB 저장
+    letter_reply     → 답장(또는 위기 안내 상태)을 letters 행에 저장 (#74)
 처리 함수 담당자는 result에 아래 키를 담아 주면 된다 (파일은 모두 media ID).
 """
 import logging
@@ -81,9 +82,16 @@ def _rig(job: dict, p: dict, r: dict) -> None:
             (_uuid(r.get("riggedGlbMediaId")), r.get("skeletonVersion")))
 
 
+def _letter_reply(job: dict, p: dict, r: dict) -> None:
+    _update("letters", p["letterId"], job["id"],
+            "reply = %s, status = %s, replied_at = now()",
+            (r.get("reply"), "crisis" if r.get("crisis") else "replied"))
+
+
 _AFTER = {
     JobType.REFERENCE_VIEWS: _reference_views,
     JobType.MESHY_GENERATE: _meshy_generate,
     JobType.MESH_PREPARE: _mesh_prepare,
     JobType.RIG: _rig,
+    JobType.LETTER_REPLY: _letter_reply,
 }

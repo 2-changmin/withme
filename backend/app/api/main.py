@@ -1,7 +1,7 @@
 """API 서버 진입점: `uvicorn app.api.main:app --reload`"""
 from fastapi import FastAPI
 
-from app.api.routes import character, health, jobs, media, pets
+from app.api.routes import character, health, jobs, letters, media, pets
 from app.errors import install_error_handlers
 from app.schemas import ErrorResponse
 
@@ -26,3 +26,4 @@ app.include_router(jobs.router)
 app.include_router(character.router)
 app.include_router(pets.router)
 app.include_router(media.router)
+app.include_router(letters.router)

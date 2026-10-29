@@ -56,8 +56,8 @@
 | `POST /pets/:id/uploads` | 업로드 URL 발급 (형식·용량·잔여 용량 확인) |
 | `POST /media/:id/finalize` | 업로드 완료 → 검사 작업 등록 |
 | `GET /jobs/:id` | 작업 상태·진행률·결과 URL |
-| `GET/POST/PATCH/DELETE /memories` | 추억 앨범 |
-| `GET /pets/:id/sounds`, `PATCH /sounds/:id` | 잘린 소리 조각 조회, 보호자 태그 수정·빼기 |
+| `POST /pets/:id/letters`, `GET /pets/:id/letters` | 무지개다리 편지 쓰기(하루 1통)·편지함 (#74) |
+| `GET /letters/:id`, `DELETE /letters/:id` | 편지 하나 조회(답장 대기)·삭제 |
 
 ### 업로드 흐름 (F03, #30)
 
@@ -84,7 +84,7 @@
 | `meshy_generate` | 이창민 | Meshy 3D 생성 → GLB 버킷 복사 → Meshy 작업 삭제 |
 | `mesh_prepare` | 황세인 | Blender로 메시 정리 + 관절 자동 추정 |
 | `rig` | 황세인 | Blender로 자동 리깅 → 리깅 GLB 저장 |
-| `sound_split` | 박재현 | FFmpeg로 오디오 추출, `silencedetect`로 조각 분할 |
+| `letter_reply` | 박재현 | Gemini 텍스트로 편지 답장, 위기 표현 판단 (#74) |
 
 박재현은 큐(`enqueue/claim/heartbeat/complete/fail`, lease 만료 복구)와 **Blender가 들어간 작업자 컨테이너**를 만들고, 각 담당자는 자기 작업 종류의 처리 함수만 작성한다.
 
@@ -98,8 +98,7 @@
 | `character_versions` | `pet_id`, `character_json`, `approved_at` | 장세찬 |
 | `preferences` | 반기는 방식, 자는 자세, 선호 장난감, 활동성 | 장세찬 |
 | `media_assets` | `source_type`, `parent_id`, 경로, 상태 | 박재현 |
-| `memories` | 글 원문, 연결 미디어, `linked_object` | 박재현 |
-| `sound_clips` | 원본 미디어, 구간, 태그(짖음·낑낑·하울링·기타) | 박재현 |
+| `letters` | 편지 본문, 답장, 상태(pending·replied·crisis), `job_id` | 박재현 |
 | `jobs`, `audit_events` | 작업 큐, 감사 로그 | 박재현 |
 
 모든 테이블에 RLS를 걸고 CI에서 검사한다. 이미지와 GLB는 비공개 버킷에 저장하고 짧은 만료 서명 URL로만 내려준다.
