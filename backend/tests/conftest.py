@@ -28,3 +28,16 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "db" in item.keywords:
             item.add_marker(skip)
+
+
+@pytest.fixture
+def storage(tmp_path, monkeypatch):
+    """미디어 저장소를 임시 폴더의 local 저장소로 바꾼다."""
+    from app import media
+    from app.api.routes import media as media_routes
+    from app.storage import LocalStorage
+
+    s = LocalStorage(str(tmp_path), "http://testserver", "test-secret")
+    monkeypatch.setattr(media, "get_storage", lambda: s)
+    monkeypatch.setattr(media_routes, "get_storage", lambda: s)
+    return s

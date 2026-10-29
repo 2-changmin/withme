@@ -29,10 +29,20 @@ class Settings(BaseSettings):
     # Meshy를 부르지 않고 가짜 결과를 돌려준다 (크레딧 절약). 실제 생성이 필요할 때만 false.
     mock_meshy: bool = True
 
+    # 미디어 저장소 (#30). local: LOCAL_MEDIA_DIR 폴더 + API가 서명 URL 처리 (ENV=local 전용)
+    # supabase: 비공개 버킷. SUPABASE_URL과 서비스 키가 필요하다.
+    storage_backend: str = "local"
+    storage_bucket: str = "media"
+    supabase_service_role_key: str = ""
+    # 앱에 내려주는 서명 URL 만료 (초)
+    signed_url_seconds: int = 300
+    local_media_dir: str = ".media"
+    # local 저장소의 서명 URL이 가리키는 API 주소와 서명 키
+    public_base_url: str = "http://localhost:8000"
+    local_storage_secret: str = "local-dev-only"
+
     # 작업자
     worker_id: str = "worker-local"
-    # 박재현 #30 비공개 버킷이 들어오기 전 임시 미디어 저장 폴더 (reference_views)
-    local_media_dir: str = ".media"
     worker_poll_seconds: float = 2.0
     worker_lease_seconds: int = 300
     blender_path: str = "blender"
