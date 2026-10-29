@@ -5,6 +5,7 @@ from uuid import UUID
 
 import jwt
 from fastapi import Depends, Header
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.config import get_settings
 from app.errors import AppError, ErrorCode
@@ -25,9 +26,14 @@ def _decode(token: str) -> dict:
     return jwt.decode(token, key, algorithms=["ES256", "RS256"], audience="authenticated")
 
 
+# Swagger(/docs)의 Authorize 버튼이 이 방식을 쓴다. 토큰이 없어도 여기서 막지 않고 아래에서 401로 답한다.
+_bearer = HTTPBearer(auto_error=False, description="Supabase access token (docs/auth-for-unity.md)")
+
+
 def current_user(
-    authorization: Annotated[str | None, Header()] = None,
-    x_dev_user: Annotated[str | None, Header()] = None,
+    bearer: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)] = None,
+    # 로컬 개발 전용 우회 (ENV=local + AUTH_DEV_BYPASS). 앱은 쓰지 않아서 명세에서 숨긴다
+    x_dev_user: Annotated[str | None, Header(include_in_schema=False)] = None,
 ) -> UUID:
     s = get_settings()
     if s.auth_dev_bypass and s.env == "local" and x_dev_user:
@@ -35,10 +41,10 @@ def current_user(
             return UUID(x_dev_user)
         except ValueError as e:
             raise AppError(ErrorCode.UNAUTHORIZED, "X-Dev-User는 UUID여야 합니다") from e
-    if not authorization or not authorization.startswith("Bearer "):
+    if bearer is None:
         raise AppError(ErrorCode.UNAUTHORIZED, "Bearer 토큰이 필요합니다")
     try:
-        claims = _decode(authorization.removeprefix("Bearer "))
+        claims = _decode(bearer.credentials)
         return UUID(claims["sub"])
     except (jwt.PyJWTError, KeyError, ValueError) as e:
         raise AppError(ErrorCode.UNAUTHORIZED, f"토큰 검증 실패: {e}") from e

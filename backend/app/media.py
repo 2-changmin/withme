@@ -111,6 +111,16 @@ def finalize_upload(media_id: UUID) -> dict:
     return _set_status(media_id, "uploaded", size)
 
 
+def mark_ready(media_id: UUID | str) -> dict:
+    """검사를 통과한 업로드를 ready로 바꾼다 (media_check). 이미 ready면 그대로 둔다."""
+    row = get(media_id)
+    if row["status"] == "ready":
+        return row
+    if row["status"] != "uploaded":
+        raise AppError(ErrorCode.CONFLICT, f"검사할 수 없는 상태: {row['status']}")
+    return _set_status(row["id"], "ready")
+
+
 def _set_status(media_id: UUID, status: str, size: int | None = None,
                 error_code: str | None = None) -> dict:
     with get_pool().connection() as conn:

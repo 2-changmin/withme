@@ -16,6 +16,17 @@ JOINT_NAMES = (
 )
 
 
+class ErrorDetail(BaseModel):
+    code: str = Field(description="UNAUTHORIZED·FORBIDDEN·NOT_FOUND·VALIDATION_FAILED·CONFLICT·"
+                                  "LIMIT_EXCEEDED·UPSTREAM_FAILED·NOT_IMPLEMENTED·INTERNAL")
+    message: str = Field(description="개발자 확인용. 화면 문구는 code로 고른다")
+
+
+class ErrorResponse(BaseModel):
+    """모든 오류 응답의 형식 (app/errors.py)."""
+    error: ErrorDetail
+
+
 class Joints(BaseModel):
     skeleton_version: int = Field(1, alias="skeletonVersion")
     space: str = "normalized"

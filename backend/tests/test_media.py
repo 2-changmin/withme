@@ -135,3 +135,22 @@ def test_signed_url_tampered_or_expired(owner, pet, storage):
 
     # 업로드 서명으로 내려받을 수 없다
     assert client.get(t["uploadUrl"]).status_code == 403
+
+
+def test_media_check_marks_ready(owner, pet):
+    from app.worker.handlers import JobContext, media_check
+    media_id = upload(owner, pet)
+    client.post(f"/media/{media_id}/finalize", headers=owner)
+    ctx = JobContext({"payload": {"mediaId": media_id}}, lambda _: None)
+    assert media_check.handle(ctx) == {"mediaId": media_id, "status": "ready"}
+    assert media_check.handle(ctx)["status"] == "ready"  # 다시 돌아도 그대로
+    assert client.get(f"/media/{media_id}", headers=owner).json()["status"] == "ready"
+
+
+def test_media_check_before_upload_fails(owner, pet):
+    from app.errors import AppError, ErrorCode
+    from app.worker.handlers import JobContext, media_check
+    media_id = ticket(owner, pet).json()["mediaId"]
+    with pytest.raises(AppError) as e:
+        media_check.handle(JobContext({"payload": {"mediaId": media_id}}, lambda _: None))
+    assert e.value.code == ErrorCode.CONFLICT
