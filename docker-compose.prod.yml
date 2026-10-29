@@ -1,0 +1,33 @@
+# 서버 배포용 (#29). DB·파일은 Supabase를 쓰고, 이 서버에서는 API와 작업자만 띄운다.
+# 실행: docker compose -f docker-compose.prod.yml up -d --build
+# 설정: backend/.env.prod (서버에만 둔다. docs/deploy.md 참고)
+x-common: &common
+  env_file: backend/.env.prod
+  restart: unless-stopped
+  # 에러 로그: docker compose -f docker-compose.prod.yml logs -f api worker
+  logging:
+    driver: json-file
+    options: {max-size: "20m", max-file: "5"}
+
+services:
+  api:
+    <<: *common
+    build: backend
+    # 학교 프록시가 https://gomagochi-jeahyun.apps.dauai.org → 이 서버 80번으로 보낸다
+    ports: ["80:8000"]
+    command: ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000",
+              "--proxy-headers", "--forwarded-allow-ips", "*"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    <<: *common
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.worker
+    environment:
+      BLENDER_PATH: blender
+      BLENDER_SCRIPTS_DIR: /srv/blender
