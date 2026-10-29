@@ -61,7 +61,7 @@ def create_reference_views(pet_id: UUID, user_id: CurrentUser,
                            idempotency_key: str | None = Header(None)) -> JobAccepted:
     """원본 사진(1~4장)으로 4면 이미지 생성 작업을 시작한다.
 
-    Gemini 전달 동의가 없으면 403 FORBIDDEN. 같은 Idempotency-Key로 다시 보내면 같은 작업.
+    같은 Idempotency-Key로 다시 보내면 같은 작업.
     """
     if _mock():
         return _mock_accept(JobType.REFERENCE_VIEWS)
@@ -87,7 +87,7 @@ def approve_reference_views(reference_view_id: str, user_id: CurrentUser,
                             idempotency_key: str | None = Header(None)) -> JobAccepted:
     """4면 확인 → 3D 생성(Meshy) 작업을 시작한다.
 
-    Meshy 전달 동의가 없으면 403 FORBIDDEN. 4면이 아직이면 409 CONFLICT.
+    4면이 아직이면 409 CONFLICT.
     4면 1세트에 3D 생성은 한 번만이라 다시 눌러도 같은 작업을 돌려준다.
     """
     if _mock():

@@ -31,7 +31,10 @@ def create_upload(pet_id: OwnedPet, body: UploadCreate, user_id: CurrentUser) ->
 
 @router.post("/media/{media_id}/finalize", response_model=JobAccepted, status_code=202)
 def finalize_upload(media_id: OwnedMedia, user_id: CurrentUser) -> JobAccepted:
-    """업로드 완료 알림. 실제 크기를 다시 확인하고 검사 작업(media_check)을 등록한다."""
+    """업로드 완료 알림. 실제 크기를 다시 확인하고 검사 작업(media_check)을 등록한다.
+
+    파일은 이 응답 직후(uploaded)부터 4면 생성에 쓸 수 있다. 검사가 끝나면 ready가 된다.
+    """
     row = media.finalize_upload(media_id)
     job_id = queue.enqueue(JobType.MEDIA_CHECK, user_id, {"mediaId": str(media_id)},
                            pet_id=row["pet_id"], idempotency_key=f"media_check:{media_id}")
