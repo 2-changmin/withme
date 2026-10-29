@@ -56,13 +56,16 @@ def run(payload: dict) -> tuple[dict, list[int]]:
     return meshy_generate.handle(JobContext(job, progress.append)), progress
 
 
-def meshy(statuses=("PENDING", "IN_PROGRESS", "SUCCEEDED"), create=None, delete=200):
-    """POST → GET(statuses 순서) → GLB 다운로드 → DELETE 를 흉내 낸다."""
+def meshy(statuses=("PENDING", "IN_PROGRESS", "SUCCEEDED"), create=None, delete=200,
+          balance=900):
+    """잔액 조회 → POST → GET(statuses 순서) → GLB 다운로드 → DELETE 를 흉내 낸다."""
     polls = iter(statuses)
 
     def handler(req: httpx.Request) -> httpx.Response:
         if req.url.host == "assets.meshy.ai":
             return httpx.Response(200, content=GLB)
+        if str(req.url) == meshy_generate.BALANCE_API:
+            return httpx.Response(200, json={"balance": balance})
         if req.method == "POST":
             return create(req) if create else httpx.Response(202, json={"result": "task-1"})
         if req.method == "DELETE":
@@ -113,8 +116,9 @@ def test_generates_saves_and_deletes_meshy_task(env):
     assert env.saved["glb-0"] == GLB
     assert env.tasks["cm-1"] == "task-1"
 
-    create = json.loads(seen[0].read())
-    assert seen[0].headers["authorization"] == "Bearer msy_test"
+    assert str(seen[0].url) == meshy_generate.BALANCE_API  # 새 작업 전에 잔액부터 본다
+    create = json.loads(seen[1].read())
+    assert seen[1].headers["authorization"] == "Bearer msy_test"
     assert create["target_polycount"] == meshy_generate.CHARACTER_POLYCOUNT
     assert create["image_urls"][0] == "data:image/png;base64," + base64.b64encode(b"img-s").decode()
     assert len(create["image_urls"]) == 4
@@ -131,7 +135,8 @@ def test_item_uses_item_polycount(env):
     result, _ = run({"itemId": "item-1", "itemKind": "snack"})
 
     assert result == {"itemId": "item-1", "rawGlbMediaId": "glb-0", "meshyTaskId": "task-1"}
-    assert json.loads(seen[0].read())["target_polycount"] == meshy_generate.ITEM_POLYCOUNT
+    create = next(r for r in seen if r.method == "POST")
+    assert json.loads(create.read())["target_polycount"] == meshy_generate.ITEM_POLYCOUNT
 
 
 def test_retry_resumes_existing_task_without_new_charge(env):
@@ -141,6 +146,32 @@ def test_retry_resumes_existing_task_without_new_charge(env):
     result, _ = run({"characterModelId": "cm-1"})
 
     assert result["meshyTaskId"] == "task-1"
+    assert not any(r.method == "POST" for r in seen)
+    # 이미 청구된 작업이라 잔액이 모자라도 막지 않는다
+    assert not any(str(r.url) == meshy_generate.BALANCE_API for r in seen)
+
+
+@pytest.mark.parametrize("balance,blocked", [(149, True), (0, True), (150, False)])
+def test_blocks_new_task_below_min_credits(env, balance, blocked):
+    seen = env(mock=False, meshy=meshy(balance=balance))
+
+    if blocked:
+        with pytest.raises(AppError) as e:
+            run({"characterModelId": "cm-1"})
+        assert e.value.code == ErrorCode.LIMIT_EXCEEDED  # 재시도하지 않는다
+        assert not any(r.method == "POST" for r in seen)
+        assert env.saved == {}
+    else:
+        assert run({"characterModelId": "cm-1"})[0]["meshyTaskId"] == "task-1"
+
+
+def test_blocks_items_too(env):
+    seen = env(mock=False, meshy=meshy(balance=100))
+
+    with pytest.raises(AppError) as e:
+        run({"itemId": "item-1", "itemKind": "toy"})
+
+    assert e.value.code == ErrorCode.LIMIT_EXCEEDED
     assert not any(r.method == "POST" for r in seen)
 
 
