@@ -41,46 +41,54 @@ def claim(worker_id: str, types: list[str], lease_seconds: int) -> dict | None:
         ).fetchone()
 
 
-def progress(job_id: UUID, percent: int, lease_seconds: int) -> None:
+# progress/complete/fail은 지금 이 작업을 잡고 있는 작업자만 바꿀 수 있다.
+# lease가 끝나 다른 작업자가 가져간 뒤 늦게 도착한 갱신은 무시하고 False를 돌려준다.
+_OWNED = "id = %s and locked_by = %s and status = 'running'"
+
+
+def progress(job_id: UUID, worker_id: str, percent: int, lease_seconds: int) -> bool:
     """진행률을 갱신하면서 lease도 연장한다 (heartbeat)."""
     with get_pool().connection() as conn:
-        conn.execute(
-            """
+        cur = conn.execute(
+            f"""
             update jobs set progress = %s, updated_at = now(),
                    lease_expires_at = now() + make_interval(secs => %s)
-            where id = %s
+            where {_OWNED}
             """,
-            (max(0, min(100, percent)), lease_seconds, job_id),
+            (max(0, min(100, percent)), lease_seconds, job_id, worker_id),
         )
+        return cur.rowcount == 1
 
 
-def complete(job_id: UUID, result: dict[str, Any]) -> None:
+def complete(job_id: UUID, worker_id: str, result: dict[str, Any]) -> bool:
     with get_pool().connection() as conn:
-        conn.execute(
-            """
+        cur = conn.execute(
+            f"""
             update jobs set status = 'succeeded', progress = 100, result = %s,
                    locked_by = null, lease_expires_at = null,
                    updated_at = now(), finished_at = now()
-            where id = %s
+            where {_OWNED}
             """,
-            (Jsonb(result), job_id),
+            (Jsonb(result), job_id, worker_id),
         )
+        return cur.rowcount == 1
 
 
-def fail(job_id: UUID, code: str, message: str, retry: bool) -> None:
+def fail(job_id: UUID, worker_id: str, code: str, message: str, retry: bool) -> bool:
     """retry=True이고 시도 횟수가 남아 있으면 다시 대기열로 돌린다."""
     with get_pool().connection() as conn:
-        conn.execute(
-            """
+        cur = conn.execute(
+            f"""
             update jobs set
                 status = case when %s and attempts < max_attempts then 'queued' else 'failed' end,
                 finished_at = case when %s and attempts < max_attempts then null else now() end,
                 error_code = %s, error_message = %s,
                 locked_by = null, lease_expires_at = null, updated_at = now()
-            where id = %s
+            where {_OWNED}
             """,
-            (retry, retry, code, message[:1000], job_id),
+            (retry, retry, code, message[:1000], job_id, worker_id),
         )
+        return cur.rowcount == 1
 
 
 def reap_expired() -> int:
