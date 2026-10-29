@@ -4,7 +4,7 @@
 - 이슈: [#6 — [황세인] Unity 프로젝트 초기 설정](https://github.com/2-changmin/withme/issues/6)
 - 이슈 상태: OPEN. 이슈에 적힌 마감은 2026-10-28이며 현재 완료로 처리하지 않는다.
 - 작업 브랜치: 사용자 지정 `unity`. 최신 `main` 병합 기준 `d4ba853`.
-- 현재 상태: 사용자 실행 지시에 따라 Git 제외·LFS·TMP·Noto Sans KR·검증 씬 설정과 에디터 검증 완료. 초기 커밋·새 체크아웃 검증 진행 중.
+- 현재 상태: 초기 설정 구현·에디터 검증·초기 커밋·새 체크아웃 재현 확인 완료. 사용자 직접 확인 대기. GitHub 이슈는 OPEN 상태를 유지한다.
 
 ## 이슈의 완료 조건
 
@@ -115,3 +115,23 @@
 | Android | 로컬 설치 엔진에 Windows 지원만 있음. Android 모듈·APK·실기기 터치는 미실행 |
 
 검증 화면은 이 PC의 Codex 시각화 폴더 `unity-setup-passed.png`에 보관했다. 스크린샷만으로 동작 통과를 판정하지 않고 프레임·입력 결과를 함께 확인했다. 사용자 직접 시각·조작 확인은 미확인이다.
+
+## 초기 커밋·새 체크아웃 검증 결과
+
+- 초기 커밋: `b22441c1` — `chore(unity): initialize project and Korean UI fonts (#6)`, 197개 파일. 프로젝트 경로는 기존 `unity/withme_frontend/`를 유지했다.
+- Git LFS: Noto OTF·Liberation Sans TTF·기본 이미지 2개를 LFS 포인터로 등록했다. 원본 저장소와 새 체크아웃 모두 `git lfs fsck` 통과. Noto 원본은 새 체크아웃에서도 4,644,748바이트로 복원됐다.
+- 생성 폴더·IDE 파일이 추적되지 않음을 확인했다. 모든 Assets 파일의 `.meta`가 존재한다. 작성한 문서·도구·규칙의 공백 검사는 통과했다. Unity가 생성한 직렬화 파일·가져온 기본 리소스의 기존 후행 공백은 임의 정규화하지 않았다.
+- 로컬 새 체크아웃에서 Library 없이 최초 임포트를 실행했다. 패키지 해결 후 컴파일 성공(`Tundra build success`, 68.82초)했으나 재로딩 시 CLI의 300초 Pipeline 연결 제한에 도달해 검증용 에디터가 종료됐다.
+- 같은 체크아웃 재개방에서 에디터 프로젝트 로드 완료(51.53초)를 확인했다. 이때 CLI 배치 명령에 전체 이름 `script eval`을 전달하면 `REMOTE_COMMAND_NOT_FOUND`가 발생하는 도구 문제를 확인했다.
+- 지원되는 고유 이름 `eval`로 실행해 최종 성공했다. `unity run <project> --command eval ... -- --code '<조회 코드>'` 형식을 사용했다. 이 우회는 실제 앱 런타임에 영향을 주지 않는다.
+- 최종 새 체크아웃 결과: `6000.0.76f1`, `SetupValidation.unity`, `NotoSansKR-UI`, 기본 글자 378, `NotoSansKR-Dynamic`, ForceText, InputSystemUIInputModule 존재. diagnostics `[]`, success=true. 별도 배치 에디터는 종료됐다.
+- 실제 Android 터치·APK·성능 검증은 미실행이다. 사용자의 직접 한글·조작 확인은 별도로 남긴다.
+- 원래 에디터는 SampleScene·Play Mode 정지 상태로 복귀했다. 검증 중 잠시 적용했던 Run In Background는 원래 꺼짐으로 복원·저장했다.
+
+## 사용자 확인 순서
+
+1. Unity `6000.0.76f1`로 `unity/withme_frontend/`를 연다.
+2. `Assets/Scenes/SetupValidation.unity`를 열고 Game View를 390 × 844로 맞춘다.
+3. Play를 누르고 Game View에 포커스를 둔다. 한글 이름·문구가 정상인지 확인한다.
+4. ‘입력 확인’을 눌러 ‘입력 확인 완료’로 바뀌는지 확인한다.
+5. Play를 종료한다. 제품 UI 구현과 Android 확인은 후속 작업이다.

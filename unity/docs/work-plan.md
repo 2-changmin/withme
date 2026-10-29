@@ -5,7 +5,7 @@
 | ID | 작업 | 기능 | 선행 작업 | 완료 조건 | 상태 |
 |---|---|---|---|---|---|
 | U00 | LLM 작업 문서 설정 | 공통 | — | 지침·계획·연결·검증 문서 작성, 링크 확인 | 문서 작성 완료 |
-| U01 / #6 | 프로젝트·Git·에디터 연결 설정 | 공통 | U00 | Unity 버전·URP·Input System·TMP·Noto Sans KR, Force Text·Visible Meta Files, 제외·LFS·프로젝트 초기 등록 확인 | 진행 중 — 설정·한글·입력 에디터 검증 완료, 초기 커밋·새 체크아웃 검증 중. [실행 기록](issues/U01-issue-6-initial-setup.md) |
+| U01 / #6 | 프로젝트·Git·에디터 연결 설정 | 공통 | U00 | Unity 버전·URP·Input System·TMP·Noto Sans KR, Force Text·Visible Meta Files, 제외·LFS·프로젝트 초기 등록 확인 | 구현 완료·사용자 확인 대기 — 초기 커밋 `b22441c1`, 한글·입력·새 체크아웃 검증 통과. [실행 기록](issues/U01-issue-6-initial-setup.md) |
 | U02 | 샘플 GLB·공용 애니메이션·첫 APK | F10 기술 확인 | U01, 샘플·뼈대 규격 | 실기기 확인용 APK 생성, GLB 런타임 로드와 클립 재생 검증 | 대기 |
 | U03 | 공통 화면 흐름·API 통신·목 응답 | 공통 | U01 | 화면 이동, 통신 오류·취소 처리, 목/실서버 구성 구분 | 대기 |
 | U04 | 인증·프로필·동의 | F01·F02 | U03, 인증 규격 | 코드 로그인, 토큰 저장, 등록·동의/거부 경로 | 대기 |
@@ -41,7 +41,7 @@ F07의 Blender 리깅 자체와 서버 작업자는 외부 의존성이다. 이 
 
 ## 다음 작업
 
-U01 / #6은 사용자 실행 지시에 따라 Git 제외·LFS·TMP·Noto Sans KR·검증 씬을 구성하고 한글·추가 한글 fallback·Input System 버튼 반응·콘솔 오류를 확인했다. 다음은 초기 커밋과 새 체크아웃 재현 확인이다. glTFast·앱 API 연동·첫 APK는 후속 작업에서 처리한다. 이슈의 `apps/unity` 경로와 실제 `unity/withme_frontend/` 차이를 기록했으며 기존 경로를 유지한다. Android 모듈이 없어 APK·실기기 입력은 미실행이다. [실행 기록](issues/U01-issue-6-initial-setup.md).
+U01 / #6은 초기 커밋·한글·추가 한글 fallback·Input System 버튼 반응·콘솔·새 체크아웃 재현을 확인했다. 사용자의 직접 확인은 대기한다. 다음 구현은 U02의 glTFast·샘플 리깅 GLB·공용 애니메이션·첫 APK이며, 샘플과 Android 모듈·기준 기기가 필요하다. U03 공통 화면 뼈대는 독립적으로 진행할 수 있다. 이슈의 `apps/unity` 경로와 실제 `unity/withme_frontend/` 차이를 기록했으며 기존 경로를 유지한다. Android 모듈이 없어 APK·실기기 입력은 미실행이다. [실행 기록](issues/U01-issue-6-initial-setup.md).
 
 ## UI 검토 산출물
 

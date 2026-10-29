@@ -123,6 +123,8 @@ ruff check app tests
 
 현재는 **초기 설정과 SVG UI 설계 단계**다. 이슈 #6에서 프로젝트·TMP·한글 폰트·입력 검증 씬과 Git 관리 규칙을 준비했다. 로그인·사진 등록·강아지 생성·상호작용이 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
 
+초기 프로젝트는 `unity` 브랜치의 `b22441c1`에 등록했다. 새 체크아웃의 LFS 복원·컴파일·폰트·씬 참조를 검증했으며, 최초 임포트 시간 초과와 CLI 배치 명령 우회 방법은 [이슈 #6 실행 기록](unity/docs/issues/U01-issue-6-initial-setup.md)에 남겼다.
+
 ## 개발 시작하기 (Unity)
 
 필요한 것: Git, Git LFS, Unity Hub, **Unity Editor 6000.0.76f1**. Android 빌드에는 같은 에디터의 **Android Build Support / Android SDK & NDK Tools / OpenJDK** 모듈이 필요하다.
