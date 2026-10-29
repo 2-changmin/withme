@@ -12,6 +12,8 @@ result:  {"characterModelId" 또는 "itemId", "rawGlbMediaId", "meshyTaskId"}
 재시도: Meshy 429·5xx·네트워크 오류·FAILED는 UPSTREAM_FAILED로 던져 큐가 다시 돌린다.
        캐릭터는 만든 Meshy 작업 ID를 character_models.meshy_task_id에 먼저 적어 두고,
        재시도 때 그 작업이 살아 있으면 새로 만들지 않고 이어서 조회한다 (크레딧 중복 방지).
+크레딧 차단(#51): 새 작업을 만들기 전에 잔여 크레딧을 조회해 150 미만이면 LIMIT_EXCEEDED.
+       이어서 조회하는 작업은 이미 청구됐으므로 막지 않는다.
 
 MOCK_MESHY=true(기본값)면 Meshy를 호출하지 않고 샘플 GLB를 저장한다.
 MOCK_MESHY_GLB에 GLB 경로를 주면 그 파일을, 없으면 삼각형 하나짜리 GLB를 쓴다.
@@ -35,7 +37,10 @@ from app.worker.handlers import JobContext
 log = logging.getLogger("meshy_generate")
 
 API = "https://api.meshy.ai/openapi/v1/multi-image-to-3d"
+BALANCE_API = "https://api.meshy.ai/openapi/v1/balance"
 GLB_MIME = "model/gltf-binary"
+# 데모 직전에 크레딧이 바닥나지 않도록 약 5회분을 남긴다 (docs/07-cost-risk.md)
+MIN_CREDITS = 150
 POLL_SECONDS = 5
 TIMEOUT_SECONDS = 15 * 60
 
@@ -105,8 +110,17 @@ def _call(client: httpx.Client, method: str, url: str, auth: bool = True,
     raise AppError(ErrorCode.INTERNAL, detail)  # 401·403: 서버 키 설정 문제
 
 
+def _check_credits(client: httpx.Client) -> None:
+    balance = _call(client, "GET", BALANCE_API).json()["balance"]
+    if balance < MIN_CREDITS:
+        log.warning("Meshy 잔여 크레딧 %d < %d, 새 생성을 막습니다", balance, MIN_CREDITS)
+        raise AppError(ErrorCode.LIMIT_EXCEEDED,
+                       f"Meshy 잔여 크레딧 부족 ({balance} < {MIN_CREDITS})")
+
+
 def _create_task(client: httpx.Client, ctx: JobContext, views: list[tuple[bytes, str]],
                  is_item: bool) -> str:
+    _check_credits(client)
     body = {
         "image_urls": [f"data:{mime};base64,{base64.b64encode(data).decode()}"
                        for data, mime in views],
