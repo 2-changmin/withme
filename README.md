@@ -106,7 +106,7 @@ ruff check app tests
 
 ## Unity 사양과 현재 상태
 
-실제 프로젝트는 **`unity/withme_frontend/`**다. Unity Hub에는 저장소 루트나 `unity/`가 아니라 이 폴더를 추가한다. 이슈 #6의 `apps/unity` 표기는 현재 저장소 구조와 달라, 초기 설정 계획은 기존 경로를 유지하는 기준으로 작성했다.
+실제 프로젝트는 **`unity/withme_frontend/`**다. Unity Hub에는 저장소 루트나 `unity/`가 아니라 이 폴더를 추가한다. 이슈 #6의 초기 `apps/unity` 표기는 기존 저장소 구조에 맞춰 `unity/withme_frontend/`로 정정했다.
 
 | 항목 | 사양 | 현재 상태 |
 |---|---|---|
