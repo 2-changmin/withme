@@ -11,8 +11,9 @@
 | API | 하는 일 |
 |---|---|
 | `POST /auth/*` | Supabase 인증 코드 로그인 (앱이 Supabase REST 직접 호출, 서버는 토큰 검증) |
-| `POST /pets`, `PATCH /pets/:id` | 반려견 프로필 생성·수정 |
-| `POST /pets/:id/consents` | 동의 기록 (Gemini·Meshy 전달 포함) |
+| `POST /pets`, `PATCH /pets/:id` | 반려견 프로필 생성·수정 (계정당 1마리, 두 번째는 409) |
+| `GET /pets`, `GET /pets/:id` | 내 반려견 조회 (재로그인 후 pet_id 복원) |
+| `POST /pets/:id/consents`, `GET /pets/:id/consents` | 동의 기록 (Gemini·Meshy 전달), 항목별 최신 동의 조회 |
 
 ### 캐릭터 생성 — 장세찬
 
