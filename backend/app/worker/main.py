@@ -7,7 +7,7 @@ import signal
 import time
 import traceback
 
-from app import queue
+from app import pipeline, queue
 from app.config import get_settings
 from app.errors import AppError, ErrorCode
 from app.worker.handlers import HANDLERS, JobContext
@@ -49,6 +49,7 @@ def run_once() -> bool:
         result = HANDLERS[job["type"]](ctx)
         if queue.complete(job_id, s.worker_id, result or {}):
             log.info("완료 %s", job_id)
+            _after(job, result or {})
         else:
             log.warning("이미 다른 작업자가 가져간 작업이라 결과를 버립니다 %s", job_id)
     except LeaseLost:
@@ -63,6 +64,14 @@ def run_once() -> bool:
         fail(ErrorCode.INTERNAL, f"{e}\n{traceback.format_exc()}", retry=True)
         log.exception("오류 %s", job_id)
     return True
+
+
+def _after(job: dict, result: dict) -> None:
+    """결과를 캐릭터 테이블로 옮기고 다음 단계를 등록한다. 실패해도 작업 결과는 그대로 둔다."""
+    try:
+        pipeline.on_succeeded(job, result)
+    except Exception:
+        log.exception("후처리 실패 %s", job["id"])
 
 
 def main() -> None:
