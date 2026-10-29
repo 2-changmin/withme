@@ -8,6 +8,7 @@
     item_cutout      → 누끼 저장 (간식·애착자리는 바로 item_views 등록, 장난감은 가챠 대기)
     item_views       → 물건 4면 저장 → meshy_generate 등록 (payload에 itemId)
     meshy_generate   → (물건이면) GLB 저장으로 끝. 물건은 관절·리깅이 없다
+    letter_reply     → 답장(또는 위기 안내 상태)을 letters 행에 저장 (#74)
 처리 함수 담당자는 result에 아래 키를 담아 주면 된다 (파일은 모두 media ID).
 """
 import logging
@@ -110,6 +111,12 @@ def _item_views(job: dict, p: dict, r: dict) -> None:
                      (job_id, item["id"]))
 
 
+def _letter_reply(job: dict, p: dict, r: dict) -> None:
+    _update("letters", p["letterId"], job["id"],
+            "reply = %s, status = %s, replied_at = now()",
+            (r.get("reply"), "crisis" if r.get("crisis") else "replied"))
+
+
 _AFTER = {
     JobType.REFERENCE_VIEWS: _reference_views,
     JobType.MESHY_GENERATE: _meshy_generate,
@@ -117,4 +124,5 @@ _AFTER = {
     JobType.RIG: _rig,
     JobType.ITEM_CUTOUT: _item_cutout,
     JobType.ITEM_VIEWS: _item_views,
+    JobType.LETTER_REPLY: _letter_reply,
 }

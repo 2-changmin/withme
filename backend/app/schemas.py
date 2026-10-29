@@ -74,6 +74,7 @@ class JobType(StrEnum):
     SOUND_SPLIT = "sound_split"          # 박재현
     ITEM_CUTOUT = "item_cutout"          # 윤승희
     ITEM_VIEWS = "item_views"            # 윤승희
+    LETTER_REPLY = "letter_reply"        # 박재현 (#74)
 
 
 class JobStatus(StrEnum):
@@ -209,5 +210,33 @@ class Item(BaseModel):
     glb_url: str | None = Field(None, alias="glbUrl")
     job_id: UUID | None = Field(None, alias="jobId")
     created_at: datetime = Field(alias="createdAt")
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+
+class LetterCreate(BaseModel):
+    body: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)]
+
+
+class LetterStatus(StrEnum):
+    PENDING = "pending"  # 답장 쓰는 중 (jobId로 조회)
+    REPLIED = "replied"  # 답장 도착
+    CRISIS = "crisis"    # 위기 표현이 있어 답장 대신 상담 안내(help)를 보여 준다
+    FAILED = "failed"    # 답장 생성 실패. 오늘 횟수에 세지 않으니 다시 쓸 수 있다
+
+
+class Letter(BaseModel):
+    id: UUID
+    pet_id: UUID = Field(alias="petId")
+    body: str
+    reply: str | None = None
+    status: LetterStatus
+    job_id: UUID | None = Field(None, alias="jobId")
+    # status=crisis일 때만. 화면에 그대로 보여 준다
+    help: str | None = None
+    # 답장 아래에 항상 함께 보여 줄 안내
+    notice: str
+    created_at: datetime = Field(alias="createdAt")
+    replied_at: datetime | None = Field(None, alias="repliedAt")
 
     model_config = {"populate_by_name": True, "serialize_by_alias": True}

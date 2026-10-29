@@ -37,6 +37,7 @@ def echo(ctx: JobContext) -> dict[str, Any]:
 from app.worker.handlers import (
     item_cutout,
     item_views,
+    letter_reply,
     media_check,
     mesh_prepare,
     meshy_generate,
@@ -55,4 +56,5 @@ HANDLERS: dict[str, Handler] = {
     JobType.SOUND_SPLIT: sound_split.handle,
     JobType.ITEM_CUTOUT: item_cutout.handle,
     JobType.ITEM_VIEWS: item_views.handle,
+    JobType.LETTER_REPLY: letter_reply.handle,
 }

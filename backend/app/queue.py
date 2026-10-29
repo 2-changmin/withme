@@ -2,9 +2,11 @@
 
 API는 enqueue/get_job만 쓰고, 작업자는 claim → progress → complete/fail 순서로 쓴다.
 """
+from contextlib import nullcontext
 from typing import Any
 from uuid import UUID
 
+import psycopg
 from psycopg.types.json import Jsonb
 
 from app.db import get_pool
@@ -12,10 +14,14 @@ from app.schemas import JobType
 
 
 def enqueue(job_type: JobType, user_id: UUID, payload: dict[str, Any],
-            pet_id: UUID | None = None, idempotency_key: str | None = None) -> UUID:
-    """같은 사용자가 같은 idempotency_key로 다시 요청하면 기존 작업 ID를 돌려준다."""
-    with get_pool().connection() as conn:
-        row = conn.execute(
+            pet_id: UUID | None = None, idempotency_key: str | None = None,
+            conn: psycopg.Connection | None = None) -> UUID:
+    """같은 사용자가 같은 idempotency_key로 다시 요청하면 기존 작업 ID를 돌려준다.
+
+    conn을 주면 그 트랜잭션 안에서 등록한다 (작업이 가리키는 행과 함께 커밋되게).
+    """
+    with nullcontext(conn) if conn else get_pool().connection() as c:
+        row = c.execute(
             """
             insert into jobs (type, user_id, pet_id, payload, idempotency_key)
             values (%s, %s, %s, %s, %s)
