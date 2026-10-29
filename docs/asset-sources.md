@@ -28,3 +28,13 @@
 - 원본 SHA-256: `58c96215009bd871cce4205ce12e74b06a68794ace3d9aa150c86b6694256aba`. GLB 원본은 변경하지 않았다.
 - 파생물: 원본 Walk에서 추출한 SampleSharedWalk.anim과 빌드용 재질 참조. 새 대기 동작·음원은 추가하지 않았다.
 - 제공 정보상 Meshy 모델과 Blender 리깅·걷기 결과이며 제작자·별도 라이선스 문서는 ZIP에 없다. 공개 재배포·제품 최종 에셋 채택 전에 제작자·이용 조건을 확인한다.
+
+## 기본 강아지 효과음
+
+- 수령일: 2026-10-30. 보호자 녹음 분할(sound_split) 대신 앱에 기본 소리를 넣어 동작별로 돌려 쓴다.
+- 파일: `unity/withme_frontend/Assets/Resources/Sounds/Dog/` (`Resources.Load<AudioClip>("Sounds/Dog/greet_01")`).
+- 동작별 파일: 반기기 `greet_01`·`greet_02`, 쓰다듬기 `pet_01`·`pet_02`, 공 쫓기 `fetch_01`, 대기 `idle_01`(반복 재생용).
+- 생활 소리 `life/`: 킁킁 `sniff_01`·`sniff_02`, 핥기 `lick_01`, 하품 `yawn_01`·`yawn_02`, 몸 털기 `shake_01`·`shake_02`, 발소리 `steps_01`~`steps_03`. 동작 사이에 무작위로 튼다.
+- 크기별 짖음 `bark_size/`: 중형 `medium_01`·`medium_02`, 대형 `large_01`·`large_02`. 소형견은 `greet_01`·`greet_02`·`fetch_01`을 쓴다.
+- 출처: Freesound. 모두 CC0 1.0(퍼블릭 도메인)이라 수정·상업적 이용이 가능하고 출처 표시는 필요 없다. 원본 링크·사용 구간은 같은 폴더 `SOURCE.md`에 기록했다.
+- 가공: 무음 제거, 음량 통일(동작 소리 -18 LUFS, 생활 소리 -20 LUFS·최대 4초), 모노 ogg(44.1kHz) 변환.
