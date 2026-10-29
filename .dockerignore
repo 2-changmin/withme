@@ -1,0 +1,13 @@
+# 작업자 이미지는 저장소 루트에서 빌드한다. 로컬 환경·비밀·결과물은 넣지 않는다.
+.git
+**/.env
+**/.venv
+**/__pycache__
+**/*.egg-info
+**/.pytest_cache
+**/.ruff_cache
+**/.media
+**/.models
+test_images
+out
+unity
