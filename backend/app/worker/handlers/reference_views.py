@@ -11,9 +11,8 @@ MOCK_GEMINI=true(기본값)면 Gemini를 부르지 않고 원본 사진을 4면 
 """
 from typing import Any
 
-from app import media, pets
+from app import media
 from app.errors import AppError, ErrorCode
-from app.schemas import ConsentItem
 from app.worker import gemini_views
 from app.worker.gemini_views import VIEWS
 from app.worker.handlers import JobContext
@@ -26,9 +25,6 @@ def handle(ctx: JobContext) -> dict[str, Any]:
     pet_id = p.get("petId")
     if not pet_id:
         raise AppError(ErrorCode.VALIDATION_FAILED, "petId가 없습니다")
-    # API(#23)가 막더라도 외부 전송 직전에 한 번 더 확인한다 (docs/decisions/2026-10-28-gemini-data-handling.md)
-    if not any(c["item"] == ConsentItem.GEMINI_TRANSFER for c in pets.latest_consents(pet_id)):
-        raise AppError(ErrorCode.FORBIDDEN, "Gemini 전달 동의가 없습니다")
     source_ids = p.get("sourceMediaIds") or []
     if not 1 <= len(source_ids) <= 4:
         raise AppError(ErrorCode.VALIDATION_FAILED, "원본 사진은 1~4장입니다")

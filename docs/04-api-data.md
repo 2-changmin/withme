@@ -13,15 +13,14 @@
 | `POST /auth/*` | Supabase 인증 코드 로그인 (앱이 Supabase REST 직접 호출, 서버는 토큰 검증) |
 | `POST /pets`, `PATCH /pets/:id` | 반려견 프로필 생성·수정 (계정당 1마리, 두 번째는 409) |
 | `GET /pets`, `GET /pets/:id` | 내 반려견 조회 (재로그인 후 pet_id 복원) |
-| `POST /pets/:id/consents`, `GET /pets/:id/consents` | 동의 기록 (Gemini·Meshy 전달), 항목별 최신 동의 조회 |
 
 ### 캐릭터 생성 — 장세찬
 
 | API | 하는 일 |
 |---|---|
-| `POST /pets/:id/reference-views` | `{"sourceMediaIds": [1~4장]}` → 4면 이미지 생성 작업 시작 → `jobId`. **Gemini 전달 동의 필요** |
+| `POST /pets/:id/reference-views` | `{"sourceMediaIds": [1~4장]}` → 4면 이미지 생성 작업 시작 → `jobId` |
 | `POST /reference-views/:id/retry` | 4면 재생성 (최대 3회, 넘으면 429) |
-| `POST /reference-views/:id/approve` | 4면 확인 → 3D 생성 작업 시작 → `jobId`. **Meshy 전달 동의 필요** |
+| `POST /reference-views/:id/approve` | 4면 확인 → 3D 생성 작업 시작 → `jobId` |
 | `GET /character-models/:id/joints` | 자동 추정한 관절 좌표 (메시 정리 전에는 409) |
 | `POST /character-models/:id/rig` | 보정된 관절 좌표로 리깅 작업 시작 → `jobId` |
 | `POST /pets/:id/character-versions` | 외형 수정값 저장 (저장할 때마다 새 버전) |
@@ -37,7 +36,7 @@
 3. Meshy가 끝나면 작업자가 `mesh_prepare`를 **자동 등록**한다 (`backend/app/pipeline.py`). 앱은 `GET /character-models/:id/joints`가 200이 될 때까지 기다린다
 4. 관절 보정 → `POST /character-models/:id/rig` → `rig` 작업. 결과 `riggedGlbUrl`
 
-- **외부 전송 동의**: 동의가 없으면 403 `FORBIDDEN`. 작업자도 전송 직전에 한 번 더 확인한다 (Gemini·Meshy 데이터 처리 ADR).
+- **외부 전송 동의**: 서버는 확인하지 않는다. 앱 화면에 안내 문구만 정적으로 보여 준다 (`consents` 테이블은 남아 있지만 쓰지 않는다).
 - **중복 청구 방지**: 4면 생성은 `Idempotency-Key` 헤더, 재생성은 같은 시도당 1번, 승인은 4면 1세트당 3D 모델 1개. 다시 눌러도 같은 `jobId`를 돌려준다.
 - **파일은 media ID로 주고받는다.** `GET /jobs/:id`가 결과의 ID 옆에 서명 URL을 붙여 준다 (`viewMediaIds`→`views`, `rawGlbMediaId`→`glbUrl`, `preparedGlbMediaId`→`preparedGlbUrl`, `riggedGlbMediaId`→`riggedGlbUrl`). URL은 300초 뒤 만료되므로 다시 조회한다.
 

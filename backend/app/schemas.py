@@ -118,25 +118,6 @@ class Pet(BaseModel):
     model_config = {"populate_by_name": True, "serialize_by_alias": True}
 
 
-class ConsentItem(StrEnum):
-    GEMINI_TRANSFER = "gemini_transfer"  # 사진을 Gemini(Google)에 보내 4면 이미지 생성
-    MESHY_TRANSFER = "meshy_transfer"    # 4면 이미지를 Meshy에 보내 3D 생성
-
-
-class ConsentCreate(BaseModel):
-    items: list[ConsentItem] = Field(min_length=1)
-    # 동의 화면 문구 버전 (#22). 문구가 바뀌면 올린다.
-    version: str = Field(min_length=1, max_length=40)
-
-
-class Consent(BaseModel):
-    item: ConsentItem
-    version: str
-    agreed_at: datetime = Field(alias="agreedAt")
-
-    model_config = {"populate_by_name": True, "serialize_by_alias": True}
-
-
 class UploadCreate(BaseModel):
     mime_type: str = Field(alias="mimeType")
     size_bytes: int = Field(alias="sizeBytes", gt=0)

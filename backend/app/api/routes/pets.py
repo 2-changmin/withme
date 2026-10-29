@@ -1,10 +1,10 @@
-"""반려견 프로필·동의 API (docs/04-api-data.md, F02)."""
+"""반려견 프로필 API (docs/04-api-data.md, F02)."""
 from fastapi import APIRouter
 
 from app import pets
 from app.auth import CurrentUser
 from app.ownership import OwnedPet
-from app.schemas import Consent, ConsentCreate, Pet, PetCreate, PetUpdate
+from app.schemas import Pet, PetCreate, PetUpdate
 
 router = APIRouter(tags=["pets"])
 
@@ -31,15 +31,3 @@ def update_pet(pet_id: OwnedPet, body: PetUpdate) -> Pet:
     """프로필 수정. 보내지 않은 항목은 그대로 둔다."""
     return Pet.model_validate(pets.update(pet_id, body.name))
 
-
-@router.post("/pets/{pet_id}/consents", response_model=list[Consent], status_code=201)
-def create_consents(pet_id: OwnedPet, body: ConsentCreate, user_id: CurrentUser) -> list[Consent]:
-    """동의 기록 (Gemini·Meshy 전달). 기록은 쌓이고, 응답은 항목별 최신 동의다."""
-    pets.add_consents(user_id, pet_id, body.items, body.version)
-    return [Consent.model_validate(row) for row in pets.latest_consents(pet_id)]
-
-
-@router.get("/pets/{pet_id}/consents", response_model=list[Consent])
-def list_consents(pet_id: OwnedPet) -> list[Consent]:
-    """항목별 최신 동의. 동의하지 않은 항목은 목록에 없다."""
-    return [Consent.model_validate(row) for row in pets.latest_consents(pet_id)]

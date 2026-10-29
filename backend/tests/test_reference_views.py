@@ -6,7 +6,6 @@ import pytest
 
 from app import media, pets
 from app.errors import AppError, ErrorCode
-from app.schemas import ConsentItem
 from app.worker.handlers import JobContext, reference_views
 
 pytestmark = pytest.mark.db
@@ -18,7 +17,6 @@ def pet(storage, monkeypatch):
     monkeypatch.setattr(reference_views.gemini_views, "get_settings", lambda: settings)
     user_id = uuid.uuid4()
     pet_id = pets.create(user_id, "콩이")["id"]
-    pets.add_consents(user_id, pet_id, [ConsentItem.GEMINI_TRANSFER], "test")
     return user_id, pet_id
 
 
@@ -64,16 +62,3 @@ def test_rejects_bad_payload(pet, payload, code):
         run(pet, payload)
     assert e.value.code == code
 
-
-def test_refuses_without_gemini_consent(storage, monkeypatch):
-    user_id = uuid.uuid4()
-    pet_id = pets.create(user_id, "두부")["id"]
-    pets.add_consents(user_id, pet_id, [ConsentItem.MESHY_TRANSFER], "test")  # Meshy만 동의
-    src = media.save_generated(user_id, pet_id, b"photo", "image/jpeg", source_type="upload")
-    called = []
-    monkeypatch.setattr(reference_views.gemini_views, "generate_views",
-                        lambda *a, **k: called.append(1))
-    with pytest.raises(AppError) as e:
-        run((user_id, pet_id), {"sourceMediaIds": [src]})
-    assert e.value.code == ErrorCode.FORBIDDEN
-    assert called == []  # Gemini 단계까지 가지 않음
