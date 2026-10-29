@@ -72,6 +72,8 @@ class JobType(StrEnum):
     MESH_PREPARE = "mesh_prepare"        # 황세인
     RIG = "rig"                          # 황세인
     SOUND_SPLIT = "sound_split"          # 박재현
+    ITEM_CUTOUT = "item_cutout"          # 윤승희
+    ITEM_VIEWS = "item_views"            # 윤승희
     LETTER_REPLY = "letter_reply"        # 박재현 (#74)
 
 
@@ -164,6 +166,49 @@ class Media(BaseModel):
     error_code: str | None = Field(None, alias="errorCode")
     # 짧은 만료 서명 URL (SIGNED_URL_SECONDS). 만료되면 다시 조회한다.
     url: str | None = None
+    created_at: datetime = Field(alias="createdAt")
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+
+# ---- 나의 방 물건 (#76) ----
+
+class ItemKind(StrEnum):
+    TOY = "toy"      # 장난감: 누끼까지만, 가챠로 뽑힌 것만 3D
+    SNACK = "snack"  # 간식: 누끼 → 바로 3D
+    BED = "bed"      # 애착자리: 누끼 → 바로 3D
+
+
+class ItemStatus(StrEnum):
+    CUTTING = "cutting"        # 누끼 작업 중
+    CUTOUT = "cutout"          # 누끼 완료 (장난감은 가챠 후보)
+    GENERATING = "generating"  # 4면·3D 생성 중
+    READY = "ready"            # GLB 있음
+
+
+class ItemCreate(BaseModel):
+    """물건 사진 media ID (POST /pets/:id/uploads → finalize로 받은 것) 1장."""
+    kind: ItemKind
+    source_media_id: UUID = Field(alias="sourceMediaId")
+
+    model_config = {"populate_by_name": True}
+
+
+class ItemAccepted(BaseModel):
+    item_id: UUID = Field(alias="itemId")
+    job_id: UUID = Field(alias="jobId")
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+
+class Item(BaseModel):
+    id: UUID
+    kind: ItemKind
+    status: ItemStatus
+    # 짧은 만료 서명 URL. 만료되면 다시 조회한다.
+    cutout_url: str | None = Field(None, alias="cutoutUrl")
+    glb_url: str | None = Field(None, alias="glbUrl")
+    job_id: UUID | None = Field(None, alias="jobId")
     created_at: datetime = Field(alias="createdAt")
 
     model_config = {"populate_by_name": True, "serialize_by_alias": True}

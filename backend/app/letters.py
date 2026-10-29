@@ -1,4 +1,4 @@
-"""무지개다리 편지 저장소 (supabase/migrations/0005_letters.sql, #74).
+"""무지개다리 편지 저장소 (supabase/migrations/0006_letters.sql, #74).
 
 보호자가 편지를 쓰면 letter_reply 작업이 반려견 말투로 답장을 쓴다. 편지 1통에 답장 1통.
 안전장치 (docs/decisions/2026-10-30-rainbow-letter.md)

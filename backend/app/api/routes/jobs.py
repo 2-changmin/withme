@@ -14,6 +14,7 @@ router = APIRouter(tags=["jobs"])
 # URL은 SIGNED_URL_SECONDS 뒤에 만료되므로 앱은 화면을 다시 열 때 이 API를 다시 부른다.
 _URL_KEYS = {
     "viewMediaIds": "views",
+    "cutoutMediaId": "cutoutUrl",
     "rawGlbMediaId": "glbUrl",
     "preparedGlbMediaId": "preparedGlbUrl",
     "riggedGlbMediaId": "riggedGlbUrl",

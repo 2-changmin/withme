@@ -2,6 +2,8 @@
 
 payload: {"characterModelId", "viewUrls": [서명 URL 1~4개]}
 result:  {"characterModelId", "rawGlbPath"}
+물건(#76)이면 characterModelId 대신 {"itemId", "itemKind", "viewMediaIds"}가 온다.
+결과는 똑같이 rawGlbMediaId를 담아 주면 app/pipeline.py가 items.glb_media_id에 넣는다 (리깅 없음).
 
 순서: Meshy 작업 생성 → 5초마다 상태 조회(ctx.progress 반영) → GLB를 우리 버킷으로 복사
       → Meshy 작업 삭제. docs/03-3d-pipeline.md 2장, docs/tools/meshy_test.py 참고
@@ -25,4 +27,4 @@ def handle(ctx: JobContext) -> dict[str, Any]:
 def _mock(ctx: JobContext) -> dict[str, Any]:
     for percent in (30, 60, 100):
         ctx.progress(percent)
-    return {"characterModelId": ctx.payload["characterModelId"], "rawGlbPath": MOCK_RAW_GLB_PATH}
+    return {"characterModelId": ctx.payload.get("characterModelId"), "rawGlbPath": MOCK_RAW_GLB_PATH}

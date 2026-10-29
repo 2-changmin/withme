@@ -49,6 +49,25 @@
 | `mesh_prepare` | `characterModelId`, `petId`, `rawGlbMediaId` | `characterModelId`, `preparedGlbMediaId`, `jointsAuto` |
 | `rig` | `characterModelId`, `petId`, `preparedGlbMediaId`, `joints` | `characterModelId`, `riggedGlbMediaId`, `skeletonVersion` |
 
+### 나의 방 물건 — 윤승희 (#76)
+
+| API | 하는 일 |
+|---|---|
+| `POST /pets/:id/items` | `{"kind": toy·snack·bed, "sourceMediaId"}` → 누끼 작업 → `itemId`, `jobId` |
+| `GET /pets/:id/items` | 물건 목록 + 상태(`cutting`·`cutout`·`generating`·`ready`), 누끼·GLB URL |
+| `POST /pets/:id/toys/gacha` | 2D 장난감 4개 이상일 때 무작위 1개 → 4면 → 3D (중복 없음) |
+
+```
+item_cutout ─┬─ 장난감: 여기서 멈춤 ── 가챠 ─┐
+             └─ 간식·애착자리 ───────────────┴→ item_views → meshy_generate(itemId) → items.glb_media_id
+```
+
+| 작업 | payload | result |
+|---|---|---|
+| `item_cutout` | `itemId`, `petId`, `sourceMediaId` | `itemId`, `cutoutMediaId` (투명 PNG) |
+| `item_views` | `itemId`, `petId`, `kind`, `cutoutMediaId` | `itemId`, `viewMediaIds`[4] |
+| `meshy_generate` (물건) | `itemId`, `petId`, `itemKind`, `viewMediaIds`[4] | `itemId`, `rawGlbMediaId` (관절·리깅 없음) |
+
 ### 미디어·작업·앨범·소리 — 박재현
 
 | API | 하는 일 |
@@ -84,6 +103,8 @@
 | `meshy_generate` | 이창민 | Meshy 3D 생성 → GLB 버킷 복사 → Meshy 작업 삭제 |
 | `mesh_prepare` | 황세인 | Blender로 메시 정리 + 관절 자동 추정 |
 | `rig` | 황세인 | Blender로 자동 리깅 → 리깅 GLB 저장 |
+| `item_cutout` | 윤승희 | 물건 사진 누끼 (rembg, 기기 안) → 투명 PNG |
+| `item_views` | 윤승희 | 누끼 → Gemini 물건용 4면 |
 | `letter_reply` | 박재현 | Gemini 텍스트로 편지 답장, 위기 표현 판단 (#74) |
 
 박재현은 큐(`enqueue/claim/heartbeat/complete/fail`, lease 만료 복구)와 **Blender가 들어간 작업자 컨테이너**를 만들고, 각 담당자는 자기 작업 종류의 처리 함수만 작성한다.
@@ -98,6 +119,7 @@
 | `character_versions` | `pet_id`, `character_json`, `approved_at` | 장세찬 |
 | `preferences` | 반기는 방식, 자는 자세, 선호 장난감, 활동성 | 장세찬 |
 | `media_assets` | `source_type`, `parent_id`, 경로, 상태 | 박재현 |
+| `items` | `kind`(toy·snack·bed), `source_media_id`, `cutout_media_id`, `model_requested_at`, `view_media_ids[4]`, `glb_media_id`, `job_id` | 윤승희 |
 | `letters` | 편지 본문, 답장, 상태(pending·replied·crisis), `job_id` | 박재현 |
 | `jobs`, `audit_events` | 작업 큐, 감사 로그 | 박재현 |
 

@@ -52,7 +52,7 @@
 | `GET /letters/:id` | 편지 하나 (답장 기다릴 때 조회) |
 | `DELETE /letters/:id` | 편지와 답장 삭제 |
 
-- `letters` 테이블 (`0005_letters.sql`): `user_id`, `pet_id`, `body`, `reply`, `status`(pending·replied·crisis), `job_id`, `replied_at`. 작업이 실패한 pending은 API가 `failed`로 보여 주고 하루 횟수에 세지 않는다
+- `letters` 테이블 (`0006_letters.sql`): `user_id`, `pet_id`, `body`, `reply`, `status`(pending·replied·crisis), `job_id`, `replied_at`. 작업이 실패한 pending은 API가 `failed`로 보여 주고 하루 횟수에 세지 않는다
 - 작업 `letter_reply` (`app/worker/letter_writer.py`): Gemini 텍스트 모델(`GEMINI_TEXT_MODEL`)에 JSON(`crisis`, `reply`)으로 받는다. 금지 표현이 나오면 한 번 다시 쓰고, 또 나오면 정해진 답장. `MOCK_LETTER=true`(기본)면 정해진 답장
 - 위기 표현: API는 키워드(`app/letters.py`의 `CRISIS_KEYWORDS`), 작업자는 LLM 판단. 둘 중 하나라도 걸리면 답장 대신 상담 안내
 
