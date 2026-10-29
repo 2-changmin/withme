@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     meshy_api_key: str = ""
     # Meshy를 부르지 않고 가짜 결과를 돌려준다 (크레딧 절약). 실제 생성이 필요할 때만 false.
     mock_meshy: bool = True
+    # 목업일 때 저장할 GLB 경로 (예: 관문용 강아지 GLB). 비우면 삼각형 하나짜리 GLB.
+    mock_meshy_glb: str = ""
     # 무지개다리 편지 답장 (#74). true면 Gemini를 부르지 않고 정해진 답장을 쓴다.
     mock_letter: bool = True
     gemini_text_model: str = "gemini-2.5-flash"
