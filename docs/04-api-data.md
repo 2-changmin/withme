@@ -19,14 +19,36 @@
 
 | API | 하는 일 |
 |---|---|
-| `POST /pets/:id/reference-views` | 원본 사진으로 4면 이미지 생성 작업 시작 → `jobId` |
-| `POST /reference-views/:id/retry` | 4면 재생성 (최대 3회) |
-| `POST /reference-views/:id/approve` | 4면 확인 → 3D 생성 작업 시작 → `jobId` |
-| `GET /character-models/:id/joints` | 자동 추정한 관절 좌표 |
+| `POST /pets/:id/reference-views` | `{"sourceMediaIds": [1~4장]}` → 4면 이미지 생성 작업 시작 → `jobId`. **Gemini 전달 동의 필요** |
+| `POST /reference-views/:id/retry` | 4면 재생성 (최대 3회, 넘으면 429) |
+| `POST /reference-views/:id/approve` | 4면 확인 → 3D 생성 작업 시작 → `jobId`. **Meshy 전달 동의 필요** |
+| `GET /character-models/:id/joints` | 자동 추정한 관절 좌표 (메시 정리 전에는 409) |
 | `POST /character-models/:id/rig` | 보정된 관절 좌표로 리깅 작업 시작 → `jobId` |
 | `POST /pets/:id/character-versions` | 외형 수정값 저장 (저장할 때마다 새 버전) |
 | `POST /pets/:id/character-approvals` | 명시적 확정. 확정 전에는 방 진입 API가 막힘 |
 | `PUT /pets/:id/preferences` | 습관 설정 |
+
+### 캐릭터 생성 흐름 (F04~F07, #23)
+
+`MOCK_CHARACTER=false`일 때 실제 테이블·작업 큐로 돈다 (`backend/app/characters.py`). `true`면 목 응답.
+
+1. `POST /pets/:id/reference-views` → `reference_views` 작업. 결과 `referenceViewId`·`views`(URL 4장)·`problems`
+2. 보호자 확인 → `POST /reference-views/:id/approve` → `meshy_generate` 작업. 결과 `characterModelId`·`glbUrl`
+3. Meshy가 끝나면 작업자가 `mesh_prepare`를 **자동 등록**한다 (`backend/app/pipeline.py`). 앱은 `GET /character-models/:id/joints`가 200이 될 때까지 기다린다
+4. 관절 보정 → `POST /character-models/:id/rig` → `rig` 작업. 결과 `riggedGlbUrl`
+
+- **외부 전송 동의**: 동의가 없으면 403 `FORBIDDEN`. 작업자도 전송 직전에 한 번 더 확인한다 (Gemini·Meshy 데이터 처리 ADR).
+- **중복 청구 방지**: 4면 생성은 `Idempotency-Key` 헤더, 재생성은 같은 시도당 1번, 승인은 4면 1세트당 3D 모델 1개. 다시 눌러도 같은 `jobId`를 돌려준다.
+- **파일은 media ID로 주고받는다.** `GET /jobs/:id`가 결과의 ID 옆에 서명 URL을 붙여 준다 (`viewMediaIds`→`views`, `rawGlbMediaId`→`glbUrl`, `preparedGlbMediaId`→`preparedGlbUrl`, `riggedGlbMediaId`→`riggedGlbUrl`). URL은 300초 뒤 만료되므로 다시 조회한다.
+
+**작업 payload·result 약속** (처리 함수 담당자는 result에 아래 키를 담는다. 후처리가 이 키로 테이블을 채운다)
+
+| 작업 | payload (API·후처리가 보냄) | result (처리 함수가 돌려줌) |
+|---|---|---|
+| `reference_views` | `petId`, `referenceViewId`, `sourceMediaIds`, `attempt` | `referenceViewId`, `viewMediaIds`[4], `problems` |
+| `meshy_generate` | `characterModelId`, `petId`, `viewMediaIds`[4] | `characterModelId`, `rawGlbMediaId`, (`meshyTaskId`) |
+| `mesh_prepare` | `characterModelId`, `petId`, `rawGlbMediaId` | `characterModelId`, `preparedGlbMediaId`, `jointsAuto` |
+| `rig` | `characterModelId`, `petId`, `preparedGlbMediaId`, `joints` | `characterModelId`, `riggedGlbMediaId`, `skeletonVersion` |
 
 ### 미디어·작업·앨범·소리 — 박재현
 
@@ -72,8 +94,8 @@
 | 테이블 | 주요 컬럼 | 소유자 |
 |---|---|---|
 | `users`, `pets`, `consents` | 프로필, 동의 항목·시각 | 장세찬 |
-| `reference_views` | `pet_id`, `source_media_ids[]`, `view_media_ids[4]`, `attempt`(1~3), `status` | 장세찬 |
-| `character_models` | `pet_id`, `reference_view_id`, `meshy_task_id`, `raw_glb_path`, `prepared_glb_path`, `joints_auto`, `joints_final`, `rigged_glb_path`, `skeleton_version`, `status` | 장세찬 |
+| `reference_views` | `pet_id`, `source_media_ids[]`, `view_media_ids[4]`, `attempt`(1~3), `retry_of`, `job_id`, `approved_at` | 장세찬 |
+| `character_models` | `pet_id`, `reference_view_id`(unique), `meshy_task_id`, `raw_glb_media_id`, `prepared_glb_media_id`, `joints_auto`, `joints_final`, `rigged_glb_media_id`, `skeleton_version`, `job_id` | 장세찬 |
 | `character_versions` | `pet_id`, `character_json`, `approved_at` | 장세찬 |
 | `preferences` | 반기는 방식, 자는 자세, 선호 장난감, 활동성 | 장세찬 |
 | `media_assets` | `source_type`, `parent_id`, 경로, 상태 | 박재현 |

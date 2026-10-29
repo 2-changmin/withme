@@ -84,6 +84,13 @@ class Job(BaseModel):
     model_config = {"populate_by_name": True, "serialize_by_alias": True}
 
 
+class ReferenceViewCreate(BaseModel):
+    """원본 사진 media ID (POST /pets/:id/uploads → finalize로 받은 것) 1~4장."""
+    source_media_ids: list[UUID] = Field(alias="sourceMediaIds", min_length=1, max_length=4)
+
+    model_config = {"populate_by_name": True}
+
+
 class JobAccepted(BaseModel):
     job_id: UUID | str = Field(alias="jobId")
 
