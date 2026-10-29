@@ -48,10 +48,10 @@
 | 종류 | 형식 | 장당 | 반려견당 |
 |---|---|---|---|
 | 사진 | jpeg·png·webp·heic·heif | 10MB | 10장 |
-| 영상 | mp4·mov | 100MB | 3개 |
+| 영상 | mp4·mov | 50MB | 3개 |
 | 소리 | m4a·mp3·wav·aac | 20MB | 5개 |
 
-전체 300MB. 상한은 `backend/app/media.py`의 `KINDS`·`TOTAL_BYTES`에 있다.
+전체 200MB. 장당 상한은 Supabase Free 플랜의 파일당 최대 50MB를 넘을 수 없다. 상한은 `backend/app/media.py`의 `KINDS`·`TOTAL_BYTES`에 있다.
 작업자는 `media.load(id, pet_id)`, `media.save_generated(...)`, `media.signed_url(id)`(Meshy에 넘길 URL)만 쓴다.
 
 ## 작업 종류 (작업 큐) — 박재현

@@ -23,13 +23,14 @@ class Kind:
 
 
 # 반려견 1마리당 업로드 상한. 파일럿 기준이라 바뀌면 여기만 고친다.
+# 장당 상한은 Supabase Free 플랜의 파일당 최대 50MB(버킷 상한)를 넘을 수 없다.
 KINDS = {
     "image": Kind(max_bytes=10 * MB, max_count=10),
-    "video": Kind(max_bytes=100 * MB, max_count=3),
+    "video": Kind(max_bytes=50 * MB, max_count=3),
     "audio": Kind(max_bytes=20 * MB, max_count=5),
 }
-# 종류별 상한을 다 채우면 500MB라, 전체 상한을 그보다 낮게 둬야 의미가 있다
-TOTAL_BYTES = 300 * MB
+# 종류별 상한을 다 채우면 350MB라, 전체 상한을 그보다 낮게 둬야 의미가 있다
+TOTAL_BYTES = 200 * MB
 
 EXTENSIONS = {
     "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp",

@@ -1,4 +1,6 @@
 """Supabase 저장소 요청 형식. 실제 Supabase 대신 httpx.MockTransport로 확인한다."""
+import json
+
 import httpx
 import pytest
 
@@ -39,6 +41,12 @@ def test_put_get_size_delete():
     store = {}
 
     def handler(req):
+        if req.url.path == "/storage/v1/object/list/media":
+            q = json.loads(req.read())
+            return httpx.Response(200, json=[
+                {"name": p.rpartition("/")[2], "metadata": {"size": len(d)}}
+                for p, d in store.items()
+                if p.rpartition("/")[0] == q["prefix"] and q["search"] in p])
         path = req.url.path.removeprefix("/storage/v1/object/media/")
         if req.method == "POST":
             store[path] = req.read()
@@ -53,6 +61,8 @@ def test_put_get_size_delete():
     s, seen = make(handler)
     s.put("pets/a.png", b"png", "image/png")
     assert seen[0].headers["content-type"] == "image/png"
+    assert "x-upsert" not in seen[0].headers  # 덮어쓰지 않는다 (CDN 캐시)
+    s.put("pets/ab.png", b"other", "image/png")
     assert s.get("pets/a.png") == b"png"
     assert s.size("pets/a.png") == 3
     s.delete("pets/a.png")

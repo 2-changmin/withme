@@ -36,11 +36,11 @@ exception when duplicate_object then null;
 end $$;
 
 -- Supabase에서만: 비공개 버킷. 로컬 PostgreSQL에는 storage 스키마가 없어서 건너뛴다.
--- 용량 상한은 app/media.py의 가장 큰 상한(영상 100MB)과 맞춘다.
+-- 용량 상한은 app/media.py의 가장 큰 상한(영상 50MB)과 맞춘다. Free 플랜은 파일당 50MB가 최대다.
 do $$ begin
     if exists (select 1 from information_schema.schemata where schema_name = 'storage') then
         insert into storage.buckets (id, name, public, file_size_limit)
-        values ('media', 'media', false, 104857600)
+        values ('media', 'media', false, 52428800)
         on conflict (id) do nothing;
     end if;
 end $$;

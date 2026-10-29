@@ -88,7 +88,7 @@ def test_finalize_rejects_file_larger_than_limit(owner, pet, storage):
 
 
 @pytest.mark.parametrize("mime,size", [("image/gif", 3), ("text/plain", 3),
-                                       ("image/jpeg", 10 * MB + 1), ("video/mp4", 100 * MB + 1)])
+                                       ("image/jpeg", 10 * MB + 1), ("video/mp4", 50 * MB + 1)])
 def test_rejects_bad_type_or_size(owner, pet, mime, size):
     r = ticket(owner, pet, mime, size)
     assert r.status_code == 422 and r.json()["error"]["code"] == "VALIDATION_FAILED"
@@ -105,8 +105,11 @@ def test_photo_count_limit(owner, pet):
 
 def test_total_size_limit(owner, pet):
     for _ in range(3):
-        assert ticket(owner, pet, "video/mp4", 100 * MB).status_code == 201
-    # 영상 3개로 전체 300MB를 다 썼다
+        assert ticket(owner, pet, "video/mp4", 50 * MB).status_code == 201
+    for _ in range(2):
+        assert ticket(owner, pet, "audio/mpeg", 20 * MB).status_code == 201
+    # 영상 150MB + 소리 40MB, 사진 10MB까지는 200MB 안이고 그다음은 넘는다
+    assert ticket(owner, pet, "image/jpeg", 10 * MB).status_code == 201
     r = ticket(owner, pet, "image/jpeg", 1)
     assert r.status_code == 429 and "용량" in r.json()["error"]["message"]
 

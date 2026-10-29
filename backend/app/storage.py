@@ -48,21 +48,23 @@ class SupabaseStorage:
             raise AppError(ErrorCode.INTERNAL, f"저장소 요청 실패 {r.status_code}: {r.text[:200]}")
         return r
 
+    # 파일 GET은 앞단 CDN이 캐시해서 덮어쓰기·삭제 뒤에도 옛 내용이 나온다.
+    # 그래서 파일은 덮어쓰지 않고(경로마다 새 UUID), 크기는 캐시되지 않는 목록 조회로 확인한다.
     def put(self, path: str, data: bytes, mime: str) -> None:
         self._check(self.http.post(self._object(path), content=data,
-                                   headers={"Content-Type": mime, "x-upsert": "true"}))
+                                   headers={"Content-Type": mime}))
 
     def get(self, path: str) -> bytes:
         return self._check(self.http.get(self._object(path))).content
 
     def size(self, path: str) -> int | None:
-        with self.http.stream("GET", self._object(path)) as r:
-            if r.status_code in (400, 404):
-                return None
-            self._check(r)
-            if "content-length" in r.headers:
-                return int(r.headers["content-length"])
-            return sum(len(chunk) for chunk in r.iter_bytes())
+        folder, _, name = path.rpartition("/")
+        r = self._check(self.http.post(f"{self.base}/object/list/{self.bucket}",
+                                       json={"prefix": folder, "search": name, "limit": 100}))
+        for obj in r.json():
+            if obj["name"] == name and obj.get("metadata"):
+                return int(obj["metadata"]["size"])
+        return None
 
     def delete(self, path: str) -> None:
         r = self.http.delete(self._object(path))

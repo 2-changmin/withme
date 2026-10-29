@@ -22,7 +22,7 @@ def _media(row: dict) -> Media:
 def create_upload(pet_id: OwnedPet, body: UploadCreate, user_id: CurrentUser) -> UploadTicket:
     """업로드 URL 발급. 형식·크기·반려견별 개수와 남은 용량을 먼저 확인한다.
 
-    상한: 사진 10MB·10장, 영상 100MB·3개, 소리 20MB·5개, 전체 300MB (app/media.py KINDS)
+    상한: 사진 10MB·10장, 영상 50MB·3개, 소리 20MB·5개, 전체 200MB (app/media.py KINDS)
     """
     row, url = media.create_upload(user_id, pet_id, body.mime_type, body.size_bytes)
     return UploadTicket(media_id=row["id"], upload_url=url,
