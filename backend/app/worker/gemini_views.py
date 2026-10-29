@@ -64,6 +64,46 @@ def view_prompt(view: str) -> str:
     )
 
 
+# ---- 나의 방 물건 (#76): 누끼 1장 → 4면. 같은 순서(옆모습 기준 → 나머지 3면)로 만든다 ----
+
+ITEM_NAMES = {
+    "toy": "dog toy",
+    "snack": "dog treat or snack",
+    "bed": "dog bed, cushion, blanket or dog house",
+}
+_ITEM_STYLE = (
+    "Photorealistic studio product photograph, true colors, materials and texture, "
+    "same shape, proportions and details (patterns, stitching, printed logos) as in the photo. "
+    "Only this one object, nothing else. Plain pure white background, soft even studio lighting, "
+    "no shadow, no text, no hands. The whole object is centered and fills about 80% of the image."
+)
+# 물건을 턴테이블에 올려 돌린 각도. 원본 사진 방향이 0°(front)다.
+# 각도를 숫자로 주지 않으면 Gemini가 원본 사진 방향을 그대로 베낀다 (위에서 찍은 사진 → 옆모습도 위에서 본 모습).
+_ITEM_VIEW_TEXT = {
+    "side": "rotated 90 degrees on a turntable, so the camera sees its left side",
+    "front": "in the same orientation as the original photo (0 degrees)",
+    "back": "rotated 180 degrees on a turntable, so the camera sees the side facing away in the photo",
+    "other": "rotated 270 degrees on a turntable, so the camera sees its right side",
+}
+_ITEM_CAMERA = (
+    "Camera at the object's height, looking horizontally (not from above), "
+    "so its thickness and depth are clearly visible."
+)
+
+
+def item_side_prompt(kind: str) -> str:
+    return (f"The reference photo shows a {ITEM_NAMES[kind]}. Keep it exactly the same object. "
+            f"Show it {_ITEM_VIEW_TEXT['side']}. {_ITEM_CAMERA} This view must look different "
+            f"from the photo. {_ITEM_STYLE}")
+
+
+def item_view_prompt(view: str) -> str:
+    return ("The first image is the original photo and the last image is the same object seen "
+            "from its left side. Keep exactly the same object, same colors, materials, "
+            f"proportions and details. Show it {_ITEM_VIEW_TEXT[view]}. {_ITEM_CAMERA} "
+            f"{_ITEM_STYLE}")
+
+
 def _client() -> genai.Client:
     key = get_settings().gemini_api_key
     if not key:
@@ -98,6 +138,7 @@ def _generate(client, refs: list[Image], prompt: str) -> Image:
 
 def generate_views(sources: list[Image], progress: Callable[[int], None] = lambda _: None,
                    client=None, prep=photo_prep.crop_dog, check=photo_prep.check_view,
+                   side_prompt: str = SIDE_PROMPT, prompt_for: Callable[[str], str] = view_prompt,
                    ) -> tuple[dict[str, Image], dict[str, list[str]]]:
     """원본 1~4장 → ({"side", "front", "back", "other"} 이미지, 면별 남은 문제).
 
@@ -116,8 +157,8 @@ def generate_views(sources: list[Image], progress: Callable[[int], None] = lambd
     out: dict[str, Image] = {}
     problems: dict[str, list[str]] = {}
     for i, view in enumerate(VIEWS, start=1):
-        refs, prompt = (sources, SIDE_PROMPT) if view == "side" else (
-            [*sources, out["side"]], view_prompt(view))
+        refs, prompt = (sources, side_prompt) if view == "side" else (
+            [*sources, out["side"]], prompt_for(view))
         for _ in range(2):  # 검사 실패 시 1번 다시
             out[view] = _generate(client, refs, prompt)
             if not (found := check(out[view][0])):
@@ -127,6 +168,15 @@ def generate_views(sources: list[Image], progress: Callable[[int], None] = lambd
             problems[view] = found
         progress(25 * i)
     return out, problems
+
+
+def generate_item_views(cutout: Image, kind: str, progress: Callable[[int], None] = lambda _: None,
+                        client=None) -> dict[str, Image]:
+    """누끼 1장 → 물건 4면. 이미 물건만 남긴 사진이라 자르기·다리 검사는 하지 않는다."""
+    views, _ = generate_views([cutout], progress, client, prep=photo_prep.on_white,
+                              check=lambda _: [], side_prompt=item_side_prompt(kind),
+                              prompt_for=item_view_prompt)
+    return views
 
 
 def _main() -> None:

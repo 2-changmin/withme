@@ -86,3 +86,29 @@ def test_mock_mode_does_not_call_gemini(monkeypatch):
     out, problems = gemini_views.generate_views([src])
     assert out == dict.fromkeys(gemini_views.VIEWS, src)
     assert problems == {}
+
+
+def test_item_views_use_item_prompts_on_white():
+    client = fake_client()
+    cutout = (b"png", "image/png")
+    seen_prep = []
+
+    def prep(data):
+        seen_prep.append(data)
+        return b"white", "image/jpeg"
+
+    out, _ = gemini_views.generate_views([cutout], client=client, prep=prep, check=lambda _: [],
+                                         side_prompt=gemini_views.item_side_prompt("toy"),
+                                         prompt_for=gemini_views.item_view_prompt)
+    calls = client.models.calls
+    assert seen_prep == [b"png"]
+    assert "dog toy" in calls[0][-1] and "dog" not in calls[1][-1].replace("dog toy", "")
+    assert calls[0][0].inline_data.data == b"white"
+    assert list(out) == list(gemini_views.VIEWS)
+
+
+def test_item_views_mock_mode_returns_cutout(monkeypatch):
+    monkeypatch.setattr(gemini_views, "get_settings", lambda: SimpleNamespace(mock_gemini=True))
+    cutout = (b"png", "image/png")
+    assert gemini_views.generate_item_views(cutout, "bed") == dict.fromkeys(gemini_views.VIEWS,
+                                                                             cutout)

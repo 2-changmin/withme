@@ -58,3 +58,48 @@ def test_crop_without_dog_is_validation_error():
     with pytest.raises(AppError) as e:
         photo_prep.crop_dog(buf.getvalue(), boxes_fn=lambda _: [])
     assert e.value.code == ErrorCode.VALIDATION_FAILED
+
+
+# ---- 물건 누끼 (#76) ----
+
+def _jpeg(w, h) -> bytes:
+    buf = io.BytesIO()
+    exif = Image.Exif()
+    exif[0x0110] = "phone"  # 카메라 모델
+    Image.new("RGB", (w, h), "gray").save(buf, "JPEG", exif=exif)
+    return buf.getvalue()
+
+
+def _fake_remove(img):
+    """가운데 20x10만 남기고 나머지는 투명."""
+    out = img.convert("RGBA")
+    out.putalpha(0)
+    out.paste((255, 0, 0, 255), (40, 45, 60, 55))
+    return out
+
+
+def test_cutout_crops_to_object_as_png():
+    data, mime = photo_prep.cutout(_jpeg(100, 100), remove_fn=_fake_remove)
+    img = Image.open(io.BytesIO(data))
+    assert mime == "image/png" and img.mode == "RGBA"
+    assert img.size == (20 + 2 * int(20 * photo_prep.PAD), 10 + 2 * int(10 * photo_prep.PAD))
+    assert not img.info.get("exif")
+
+
+def test_cutout_without_object_fails():
+    def nothing(img):
+        out = img.convert("RGBA")
+        out.putalpha(0)
+        return out
+
+    with pytest.raises(AppError) as e:
+        photo_prep.cutout(_jpeg(50, 50), remove_fn=nothing)
+    assert e.value.code == ErrorCode.VALIDATION_FAILED
+
+
+def test_on_white_flattens_transparency():
+    buf = io.BytesIO()
+    Image.new("RGBA", (4, 4), (0, 0, 0, 0)).save(buf, "PNG")
+    data, mime = photo_prep.on_white(buf.getvalue())
+    assert mime == "image/jpeg"
+    assert Image.open(io.BytesIO(data)).getpixel((1, 1)) == (255, 255, 255)

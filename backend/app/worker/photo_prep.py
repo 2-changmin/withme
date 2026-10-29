@@ -2,11 +2,13 @@
 
 보내기 전: 원본에서 반려견 영역만 잘라 다시 저장한다 (사람·배경 최소화, EXIF·위치 정보 제거).
 받은 뒤: 4면 결과가 해상도·흰 배경·다리 분리 조건을 지키는지 검사한다.
+물건(#76): 사진 → 배경을 지운 투명 PNG(누끼). rembg(isnet-general-use)를 기기 안에서 돌린다.
 
 강아지 검출은 기기 안에서 MediaPipe(EfficientDet-Lite0, COCO "dog")로 한다.
 원본을 외부로 보내지 않기 위해서다 (docs/decisions/2026-10-28-gemini-data-handling.md).
 """
 import io
+import os
 import urllib.request
 from functools import lru_cache
 from pathlib import Path
@@ -74,6 +76,49 @@ def crop_dog(data: bytes, boxes_fn=_dog_boxes) -> Image:
     out = io.BytesIO()
     img.crop(pad_box(box, *img.size)).convert("RGB").save(out, "JPEG", quality=92)
     return out.getvalue(), "image/jpeg"
+
+
+@lru_cache
+def _rembg_session():
+    # 모델(약 180MB)은 처음 쓸 때 backend/.models/에 받는다
+    os.environ.setdefault("U2NET_HOME", str(MODEL_PATH.parent))
+    from rembg import new_session
+
+    return new_session("isnet-general-use")
+
+
+def _remove_bg(img: PILImage.Image) -> PILImage.Image:
+    from rembg import remove
+
+    return remove(img, session=_rembg_session())
+
+
+def cutout(data: bytes, remove_fn=None) -> Image:
+    """물건 사진 → 배경을 지우고 물건 크기로 자른 투명 PNG. EXIF는 남기지 않는다."""
+    try:
+        img = ImageOps.exif_transpose(PILImage.open(io.BytesIO(data))).convert("RGB")
+    except Exception as e:
+        raise AppError(ErrorCode.VALIDATION_FAILED, f"사진을 열 수 없음: {e}") from e
+
+    out = (remove_fn or _remove_bg)(img).convert("RGBA")
+    # 거의 투명한 가장자리(반투명 그림자 등)는 물건으로 보지 않는다
+    box = out.getchannel("A").point(lambda a: 255 if a > 16 else 0).getbbox()
+    if box is None:
+        raise AppError(ErrorCode.VALIDATION_FAILED, "사진에서 물건을 찾지 못함")
+    x0, y0, x1, y1 = box
+    buf = io.BytesIO()
+    out.crop(pad_box((x0, y0, x1 - x0, y1 - y0), *out.size)).save(buf, "PNG")
+    return buf.getvalue(), "image/png"
+
+
+def on_white(data: bytes) -> Image:
+    """투명 PNG → 흰 배경 JPEG. Gemini는 투명 영역을 검게 읽을 수 있다."""
+    img = PILImage.open(io.BytesIO(data)).convert("RGBA")
+    bg = PILImage.new("RGBA", img.size, (255, 255, 255, 255))
+    bg.alpha_composite(img)
+    buf = io.BytesIO()
+    bg.convert("RGB").save(buf, "JPEG", quality=92)
+    return buf.getvalue(), "image/jpeg"
 
 
 def _foreground(img: PILImage.Image) -> tuple[list[list[bool]], tuple[int, int, int]]:
