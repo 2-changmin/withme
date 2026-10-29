@@ -22,6 +22,10 @@ def _stop(*_):
     log.info("종료 신호를 받았습니다. 현재 작업을 마치고 멈춥니다.")
 
 
+class LeaseLost(Exception):
+    """lease가 끝나 다른 작업자가 작업을 가져갔다. 처리를 멈추고 결과도 쓰지 않는다."""
+
+
 def run_once() -> bool:
     """작업 하나를 처리했으면 True."""
     s = get_settings()
@@ -29,21 +33,35 @@ def run_once() -> bool:
     if job is None:
         return False
 
-    log.info("시작 %s %s (시도 %d)", job["type"], job["id"], job["attempts"])
-    ctx = JobContext(job, lambda p: queue.progress(job["id"], p, s.worker_lease_seconds))
+    job_id = job["id"]
+
+    def heartbeat(percent: int) -> None:
+        if not queue.progress(job_id, s.worker_id, percent, s.worker_lease_seconds):
+            raise LeaseLost
+
+    def fail(code: str, message: str, retry: bool) -> None:
+        if not queue.fail(job_id, s.worker_id, code, message, retry):
+            log.warning("이미 다른 작업자가 가져간 작업이라 실패 기록을 버립니다 %s", job_id)
+
+    log.info("시작 %s %s (시도 %d)", job["type"], job_id, job["attempts"])
+    ctx = JobContext(job, heartbeat)
     try:
         result = HANDLERS[job["type"]](ctx)
-        queue.complete(job["id"], result or {})
-        log.info("완료 %s", job["id"])
+        if queue.complete(job_id, s.worker_id, result or {}):
+            log.info("완료 %s", job_id)
+        else:
+            log.warning("이미 다른 작업자가 가져간 작업이라 결과를 버립니다 %s", job_id)
+    except LeaseLost:
+        log.warning("lease를 잃어 처리를 멈춥니다 %s", job_id)
     except NotImplementedError as e:
-        queue.fail(job["id"], ErrorCode.NOT_IMPLEMENTED, str(e) or "구현 전", retry=False)
-        log.warning("구현 전 %s %s", job["type"], job["id"])
+        fail(ErrorCode.NOT_IMPLEMENTED, str(e) or "구현 전", retry=False)
+        log.warning("구현 전 %s %s", job["type"], job_id)
     except AppError as e:
-        queue.fail(job["id"], e.code, e.message, retry=e.code == ErrorCode.UPSTREAM_FAILED)
-        log.warning("실패 %s %s: %s", job["id"], e.code, e.message)
+        fail(e.code, e.message, retry=e.code == ErrorCode.UPSTREAM_FAILED)
+        log.warning("실패 %s %s: %s", job_id, e.code, e.message)
     except Exception as e:  # 예상 못 한 오류는 재시도
-        queue.fail(job["id"], ErrorCode.INTERNAL, f"{e}\n{traceback.format_exc()}", retry=True)
-        log.exception("오류 %s", job["id"])
+        fail(ErrorCode.INTERNAL, f"{e}\n{traceback.format_exc()}", retry=True)
+        log.exception("오류 %s", job_id)
     return True
 
 

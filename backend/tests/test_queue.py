@@ -56,3 +56,69 @@ def test_not_implemented_fails_without_retry(user):
     assert job["status"] == "failed"
     assert job["error_code"] == "NOT_IMPLEMENTED"
     assert job["attempts"] == 1
+
+
+@pytest.fixture
+def job_type():
+    """다른 테스트가 남긴 작업을 가져가지 않도록 테스트마다 고유한 종류를 쓴다."""
+    return f"test-{uuid.uuid4()}"
+
+
+def test_expired_lease_is_reclaimed(user, job_type):
+    job_id = queue.enqueue(job_type, user, {})
+    assert queue.claim("A", [job_type], 0)["id"] == job_id
+
+    job = queue.claim("B", [job_type], 60)
+    assert job["id"] == job_id
+    assert job["locked_by"] == "B"
+    assert job["attempts"] == 2
+
+
+def test_stale_worker_cannot_overwrite(user, job_type):
+    job_id = queue.enqueue(job_type, user, {})
+    queue.claim("A", [job_type], 0)
+    queue.claim("B", [job_type], 60)
+
+    assert not queue.progress(job_id, "A", 50, 60)
+    assert not queue.fail(job_id, "A", "INTERNAL", "늦게 온 실패", retry=False)
+    assert not queue.complete(job_id, "A", {"by": "A"})
+    assert queue.complete(job_id, "B", {"by": "B"})
+
+    job = queue.get_job(job_id, user)
+    assert job["status"] == "succeeded"
+    assert job["result"] == {"by": "B"}
+
+
+def test_reap_expired_fails_exhausted_job(user, job_type):
+    job_id = queue.enqueue(job_type, user, {})
+    for _ in range(3):
+        assert queue.claim("A", [job_type], 0)["id"] == job_id
+    assert queue.claim("A", [job_type], 0) is None
+
+    queue.reap_expired()
+    job = queue.get_job(job_id, user)
+    assert job["status"] == "failed"
+    assert job["error_code"] == "LEASE_EXPIRED"
+
+
+def test_worker_stops_when_lease_lost(user, job_type, monkeypatch):
+    from app.db import get_pool
+
+    reached = []
+
+    def handler(ctx):
+        # 처리 도중 lease가 끝나 다른 작업자가 가져간 상황
+        with get_pool().connection() as conn:
+            conn.execute("update jobs set locked_by = 'B' where id = %s", (ctx.job["id"],))
+        ctx.progress(50)
+        reached.append(True)
+        return {}
+
+    monkeypatch.setattr(worker, "HANDLERS", {job_type: handler})
+    job_id = queue.enqueue(job_type, user, {})
+    assert worker.run_once()
+
+    assert not reached
+    job = queue.get_job(job_id, user)
+    assert job["status"] == "running"
+    assert job["locked_by"] == "B"
