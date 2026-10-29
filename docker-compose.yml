@@ -15,5 +15,31 @@ services:
       interval: 2s
       retries: 15
 
+  # 작업자 (Blender·FFmpeg 포함, #28). 기본 up에는 포함되지 않는다.
+  # 실행: docker compose --profile worker up -d --build worker
+  # Apple Silicon에서는 amd64 에뮬레이션으로 돌아 Blender가 느리다.
+  worker:
+    profiles: [worker]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.worker
+    platform: linux/amd64
+    env_file:
+      - path: backend/.env
+        required: false
+    # backend/.env의 로컬 경로가 컨테이너 경로를 덮어쓰지 않도록 여기서 고정한다
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
+      BLENDER_PATH: blender
+      BLENDER_SCRIPTS_DIR: /srv/blender
+      WORKER_ID: worker-docker
+      LOCAL_MEDIA_DIR: /srv/.media
+    volumes:
+      # #30 버킷 전까지 로컬에서 띄운 API와 같은 임시 미디어 폴더를 쓴다
+      - ./backend/.media:/srv/.media
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data:
