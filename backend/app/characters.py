@@ -18,29 +18,18 @@ from uuid import UUID
 
 from psycopg.types.json import Jsonb
 
-from app import media, pets, queue
+from app import media, queue
 from app.db import get_pool
 from app.errors import AppError, ErrorCode
-from app.schemas import ConsentItem, JobType, Joints
+from app.schemas import JobType, Joints
 
 MAX_REFERENCE_ATTEMPTS = 3
-
-_CONSENT_MESSAGES = {
-    ConsentItem.GEMINI_TRANSFER: "사진을 Gemini에 보내는 데 동의하지 않았습니다",
-    ConsentItem.MESHY_TRANSFER: "이미지를 Meshy에 보내는 데 동의하지 않았습니다",
-}
-
 
 def _parse_id(value: str, what: str) -> UUID:
     try:
         return UUID(value)
     except ValueError as e:
         raise AppError(ErrorCode.NOT_FOUND, f"{what}이 없습니다") from e
-
-
-def require_consent(pet_id: UUID, item: ConsentItem) -> None:
-    if not any(c["item"] == item for c in pets.latest_consents(pet_id)):
-        raise AppError(ErrorCode.FORBIDDEN, _CONSENT_MESSAGES[item])
 
 
 def _check_sources(pet_id: UUID, source_ids: list[UUID]) -> None:
@@ -95,7 +84,6 @@ def _enqueue_reference_views(rv: dict) -> UUID:
 
 def create_reference_views(user_id: UUID, pet_id: UUID, source_ids: list[UUID],
                            idempotency_key: str | None) -> UUID:
-    require_consent(pet_id, ConsentItem.GEMINI_TRANSFER)
     source_ids = list(dict.fromkeys(source_ids))
     _check_sources(pet_id, source_ids)
     with get_pool().connection() as conn:
@@ -118,7 +106,6 @@ def create_reference_views(user_id: UUID, pet_id: UUID, source_ids: list[UUID],
 
 def retry_reference_views(user_id: UUID, reference_view_id: str) -> UUID:
     prev = _owned("reference_views", reference_view_id, user_id, "4면 이미지")
-    require_consent(prev["pet_id"], ConsentItem.GEMINI_TRANSFER)
     if prev["approved_at"] is not None:
         raise AppError(ErrorCode.CONFLICT, "이미 확정한 4면 이미지입니다")
     if prev["attempt"] >= MAX_REFERENCE_ATTEMPTS:
@@ -154,7 +141,6 @@ def _view_media_ids(rv: dict) -> list[UUID]:
 
 def approve_reference_views(user_id: UUID, reference_view_id: str) -> UUID:
     rv = _owned("reference_views", reference_view_id, user_id, "4면 이미지")
-    require_consent(rv["pet_id"], ConsentItem.MESHY_TRANSFER)
     view_ids = _view_media_ids(rv)
     with get_pool().connection() as conn:
         conn.execute(

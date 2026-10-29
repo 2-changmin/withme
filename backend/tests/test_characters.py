@@ -31,12 +31,8 @@ def _user() -> dict:
     return {"X-Dev-User": str(uuid.uuid4())}
 
 
-def _pet(headers, consents=("gemini_transfer", "meshy_transfer")) -> str:
-    pet = client.post("/pets", headers=headers, json={"name": "콩이"}).json()["id"]
-    if consents:
-        client.post(f"/pets/{pet}/consents", headers=headers,
-                    json={"items": list(consents), "version": "test"})
-    return pet
+def _pet(headers) -> str:
+    return client.post("/pets", headers=headers, json={"name": "콩이"}).json()["id"]
 
 
 def _upload(headers, pet) -> str:
@@ -92,10 +88,6 @@ def _ready_views(owner, pet) -> tuple[str, str]:
 
 # ---- 4면 생성 ----
 
-def test_create_needs_gemini_consent(owner):
-    pet = _pet(owner, consents=("meshy_transfer",))
-    r = _create(owner, pet, [_upload(owner, pet)])
-    assert r.status_code == 403 and r.json()["error"]["code"] == "FORBIDDEN"
 
 
 def test_create_rejects_photos_of_other_pet(owner, pet):
@@ -151,14 +143,6 @@ def test_retry_up_to_three_attempts(owner, pet):
 
 # ---- 승인 → 3D 생성 ----
 
-def test_approve_needs_meshy_consent(owner):
-    pet = _pet(owner, consents=("gemini_transfer",))
-    rv_id, _ = _ready_views(owner, pet)
-    r = client.post(f"/reference-views/{rv_id}/approve", headers=owner)
-    assert r.status_code == 403 and r.json()["error"]["code"] == "FORBIDDEN"
-    with get_pool().connection() as conn:
-        assert conn.execute("select count(*) as n from character_models where reference_view_id"
-                            " = %s", (rv_id,)).fetchone()["n"] == 0
 
 
 def test_approve_before_views_ready_is_409(owner, pet):

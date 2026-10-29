@@ -60,34 +60,6 @@ def test_other_user_cannot_see_or_change_pet(pet):
     for r in (
         client.get(f"/pets/{pid}", headers=other),
         client.patch(f"/pets/{pid}", headers=other, json={"name": "x"}),
-        client.get(f"/pets/{pid}/consents", headers=other),
-        client.post(f"/pets/{pid}/consents", headers=other,
-                    json={"items": ["gemini_transfer"], "version": "v1"}),
     ):
         assert r.status_code == 404 and r.json()["error"]["code"] == "NOT_FOUND"
     assert client.get("/pets", headers=other).json() == []
-
-
-def test_consents_latest_per_item(owner, pet):
-    url = f"/pets/{pet['id']}/consents"
-    assert client.get(url, headers=owner).json() == []
-
-    r = client.post(url, headers=owner,
-                    json={"items": ["gemini_transfer", "meshy_transfer"], "version": "2026-10-28"})
-    assert r.status_code == 201
-    assert {c["item"]: c["version"] for c in r.json()} == {
-        "gemini_transfer": "2026-10-28", "meshy_transfer": "2026-10-28"}
-
-    client.post(url, headers=owner, json={"items": ["gemini_transfer"], "version": "2026-11-01"})
-    latest = {c["item"]: c["version"] for c in client.get(url, headers=owner).json()}
-    assert latest == {"gemini_transfer": "2026-11-01", "meshy_transfer": "2026-10-28"}
-
-
-@pytest.mark.parametrize("body", [
-    {"items": [], "version": "v1"},
-    {"items": ["unknown"], "version": "v1"},
-    {"items": ["gemini_transfer"], "version": ""},
-])
-def test_invalid_consent(owner, pet, body):
-    r = client.post(f"/pets/{pet['id']}/consents", headers=owner, json=body)
-    assert r.status_code == 422
