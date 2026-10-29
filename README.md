@@ -49,6 +49,9 @@
 | [07-cost-risk.md](docs/07-cost-risk.md) | 비용 예산, 리스크와 대응 |
 | [08-quality-ethics.md](docs/08-quality-ethics.md) | 성공 지표, 인수 테스트, 윤리·개인정보, 열린 질문 |
 | [auth-for-unity.md](docs/auth-for-unity.md) | Unity 로그인 연동: Supabase 인증 코드 요청·검증·갱신 순서, 오류 코드 |
+| [Unity 작업 계획](unity/docs/work-plan.md) | 초기 설정·화면·연동·검증 순서 |
+| [이슈 #6 실행 계획](unity/docs/issues/U01-issue-6-initial-setup.md) | 현재 설정 점검 결과와 초기 설정 완료 조건 |
+| [UI 와이어프레임](unity/docs/wireframe/README.md) | 화면 구조·문구·등록 후 3D 메인과 통합 메뉴 |
 
 ## 반드시 지킬 제품 원칙
 
@@ -100,3 +103,44 @@ ruff check app tests
 **외부 API 비용**: 유료 API를 부르는 작업은 `MOCK_서비스명` 스위치를 두고 기본값을 `true`(호출 안 함)로 한다. 자기 담당 부분을 실제로 테스트할 때만 자기 `.env`에서 `false`로 바꾼다. 지금은 `MOCK_MESHY`가 있다.
 
 **작업자 처리 함수 담당**: `backend/app/worker/handlers/`의 파일마다 담당자와 이슈 번호가 적혀 있다. 자기 파일의 `handle()`만 구현하면 큐와 재시도는 공통 코드가 처리한다.
+
+## Unity 사양과 현재 상태
+
+실제 프로젝트는 **`unity/withme_frontend/`**다. Unity Hub에는 저장소 루트나 `unity/`가 아니라 이 폴더를 추가한다. 이슈 #6의 `apps/unity` 표기는 현재 저장소 구조와 달라, 초기 설정 계획은 기존 경로를 유지하는 기준으로 작성했다.
+
+| 항목 | 사양 | 현재 상태 |
+|---|---|---|
+| 에디터 | Unity **6000.0.76f1** / Unity 6.0 LTS | `ProjectVersion.txt`에 고정. 같은 패치 버전 사용 |
+| 렌더링 | URP **17.0.4** | 패키지 및 PC·Mobile 렌더 파이프라인 에셋 참조 확인 |
+| 언어·UI | C#, uGUI **2.0.0** + TextMeshPro | TMP 기본 리소스 포함. 검증 씬에서 한글 표시 확인 |
+| 한글 폰트 | Noto Sans KR Regular | 원본·OFL 라이선스·기본 378자 정적 폰트·동적 fallback 포함. 아틀라스 각각 1024 |
+| 입력 | Input System **1.19.0** | 새 Input System + UI 입력 모듈. 에디터에서 포인터 이벤트로 버튼 반응 검증. 실기기 터치는 미검증 |
+| 에셋 관리 | Force Text, Visible Meta Files, Git LFS | 에디터 설정 확인. 생성 폴더 제외·바이너리 LFS 규칙 적용 |
+| Android | IL2CPP, ARM64, 최소 API 23 / 대상 API 자동 | 현재 PC에 Android 빌드 모듈 없음. APK·실기기는 U02 이후 검증 |
+| 테스트 | Unity Test Framework **1.6.0** | 패키지 설치됨. 기능 테스트 미실행 |
+| 에디터 연결 | Unity 공식 플러그인 + Pipeline **0.9.1-exp.1** | CLI·MCP 연결 검증 기록 있음. 일반 실행에는 CLI·MCP 불필요 |
+| 추후 연동 | glTFast, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | glTFast·앱 통신·인증 구현은 후속 작업. Newtonsoft Json 3.2.1은 현재 간접 의존성 |
+
+현재는 **초기 설정과 SVG UI 설계 단계**다. 이슈 #6에서 프로젝트·TMP·한글 폰트·입력 검증 씬과 Git 관리 규칙을 준비했다. 로그인·사진 등록·강아지 생성·상호작용이 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
+
+## 개발 시작하기 (Unity)
+
+필요한 것: Git, Git LFS, Unity Hub, **Unity Editor 6000.0.76f1**. Android 빌드에는 같은 에디터의 **Android Build Support / Android SDK & NDK Tools / OpenJDK** 모듈이 필요하다.
+
+1. Unity 프로젝트가 포함된 브랜치를 받은 뒤 저장소 루트에서 LFS를 준비한다. 처음 설치한 PC에서는 `git lfs install`을 한 번 실행하고 `git lfs pull`로 폰트·이미지·모델·음원을 받는다. 원본 폰트 대신 LFS 포인터 텍스트만 있으면 Unity가 폰트를 읽을 수 없다.
+
+   ```bash
+   git lfs install
+   git lfs pull
+   ```
+
+2. Unity Hub에서 **Add → Add project from disk**로 `unity/withme_frontend/`를 추가하고 **6000.0.76f1**로 연다. 다른 에디터 버전으로 자동 업그레이드하지 않는다.
+3. 첫 실행의 패키지 다운로드·임포트·컴파일이 끝날 때까지 기다린다. Console에 컴파일 오류가 없는지 확인한다. 패키지 기준은 `Packages/manifest.json`과 `Packages/packages-lock.json`이다.
+4. 기본 장면은 `Assets/Scenes/SampleScene.unity`다. 한글·입력 확인은 **`Assets/Scenes/SetupValidation.unity`**를 열고 Game View를 세로형 **390 × 844**로 맞춘 뒤 Play로 실행한다. 한글 문구가 정상 표시되고 버튼을 누르면 **‘입력 확인 완료’**로 바뀌어야 한다. 클릭할 때는 Game View에 포커스를 둔다. 검증 씬은 제품 UI가 아니며 Build Settings에는 기본 장면만 유지했다.
+5. TMP 기본 리소스·폰트 설정은 프로젝트에 포함돼 있어 새 PC에서 다시 생성하지 않는다. 기본 폰트는 `Assets/Fonts/NotoSansKR/NotoSansKR-UI.asset`, 사용자 이름용 보조 폰트는 `NotoSansKR-Dynamic.asset`이다. 폰트 출처·라이선스는 [에셋 출처](docs/asset-sources.md), UI 설계는 [전체 SVG](unity/docs/wireframe/00-overview.svg)를 확인한다.
+
+Unity 화면 작업에는 백엔드 실행이 필수는 아니다. 실제 API 연동을 시작할 때는 위 백엔드 절차로 서버를 실행하고 [연결 기준](unity/docs/integration.md)과 [인증 문서](docs/auth-for-unity.md)를 따른다. Android 실기기에서 PC API에 접근할 때는 PC의 LAN 주소나 `adb reverse`를 사용한다. 기기 자체의 `localhost`를 PC 주소로 사용하지 않는다.
+
+등록·확정이 끝난 사용자는 앱을 열 때 강아지가 있는 **3D 메인**으로 진입하고, 상호작용 외 기능은 **통합 메뉴**로 제공하는 방향으로 설계했다. 현재 와이어프레임에서는 추억 앨범을 제외했으며, 이는 상위 PRD 전체에서 앨범 기능을 삭제했다는 뜻은 아니다.
+
+커밋 대상은 `Assets/`와 `.meta`, `Packages/`, `ProjectSettings/`, Unity 작업 문서·설정 도구다. `Library/`, `Temp/`, `Logs/`, `Obj/`, `UserSettings/`, IDE 생성 파일·빌드 결과는 프로젝트의 `.gitignore`에서 제외한다. `.gitattributes`는 `fbx/glb/png/wav/mp3/otf/ttf`를 LFS로 관리한다. 씬·프리팹·`.asset`·`.meta`는 텍스트로 유지하며, 커밋 전 등록 대상과 LFS 상태를 확인한다.
