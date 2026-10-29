@@ -87,7 +87,7 @@ cp .env.example .env
 # 3. API 서버 → http://localhost:8000/docs 에서 API 문서 확인
 uvicorn app.api.main:app --reload
 
-# 4. 작업자 (다른 터미널)
+# 4. 작업자 (다른 터미널). Blender 작업까지 돌리려면 docs/worker-container.md 참고
 python -m app.worker.main
 
 # 5. 테스트·린트

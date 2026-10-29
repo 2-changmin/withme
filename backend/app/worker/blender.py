@@ -12,7 +12,9 @@ def run_blender(script: str, *args: str, timeout: int = 120) -> str:
     script_path = Path(s.blender_scripts_dir) / script
     if not script_path.exists():
         raise AppError(ErrorCode.INTERNAL, f"Blender 스크립트 없음: {script_path}")
-    cmd = [s.blender_path, "-b", "--factory-startup", "-P", str(script_path), "--", *args]
+    # --python-exit-code: 이게 없으면 스크립트가 예외로 죽어도 Blender는 0으로 끝난다
+    cmd = [s.blender_path, "-b", "--factory-startup", "--python-exit-code", "1",
+           "-P", str(script_path), "--", *args]
     try:
         r = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=timeout)
     except FileNotFoundError as e:
