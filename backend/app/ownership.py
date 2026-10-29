@@ -8,6 +8,7 @@ from uuid import UUID
 
 from fastapi import Depends
 
+from app import media
 from app.auth import CurrentUser
 from app.db import get_pool
 from app.errors import AppError, ErrorCode
@@ -32,3 +33,12 @@ def owned_pet(pet_id: UUID, user_id: CurrentUser) -> UUID:
 
 
 OwnedPet = Annotated[UUID, Depends(owned_pet)]
+
+
+def owned_media(media_id: UUID, user_id: CurrentUser) -> UUID:
+    if not media.is_owner(media_id, user_id):
+        raise AppError(ErrorCode.NOT_FOUND, "파일이 없습니다")
+    return media_id
+
+
+OwnedMedia = Annotated[UUID, Depends(owned_media)]

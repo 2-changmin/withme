@@ -5,6 +5,7 @@
 - 출력: 결과 dict (jobs.result에 저장되어 앱이 GET /jobs/:id로 받는다)
 - 외부 API 일시 장애: AppError(ErrorCode.UPSTREAM_FAILED) → 자동 재시도
 - 입력이 잘못됨: AppError(ErrorCode.VALIDATION_FAILED) → 재시도 없이 실패
+- 파일 읽기·저장: app.media의 load / save_generated / signed_url
 """
 from collections.abc import Callable
 from dataclasses import dataclass

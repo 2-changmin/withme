@@ -128,3 +128,42 @@ class Consent(BaseModel):
     agreed_at: datetime = Field(alias="agreedAt")
 
     model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+
+class UploadCreate(BaseModel):
+    mime_type: str = Field(alias="mimeType")
+    size_bytes: int = Field(alias="sizeBytes", gt=0)
+
+    model_config = {"populate_by_name": True}
+
+
+class UploadTicket(BaseModel):
+    """앱은 uploadUrl에 headers를 붙여 PUT으로 파일 본문을 올린 뒤 finalize를 부른다."""
+    media_id: UUID = Field(alias="mediaId")
+    upload_url: str = Field(alias="uploadUrl")
+    method: str = "PUT"
+    headers: dict[str, str]
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+
+class MediaStatus(StrEnum):
+    PENDING = "pending"    # 업로드 URL만 발급
+    UPLOADED = "uploaded"  # 업로드 완료, 검사 중
+    READY = "ready"        # 사용 가능
+    REJECTED = "rejected"  # 검사에서 거절 (errorCode 참고)
+
+
+class Media(BaseModel):
+    id: UUID
+    pet_id: UUID = Field(alias="petId")
+    source_type: str = Field(alias="sourceType")
+    mime_type: str = Field(alias="mimeType")
+    size_bytes: int = Field(alias="sizeBytes")
+    status: MediaStatus
+    error_code: str | None = Field(None, alias="errorCode")
+    # 짧은 만료 서명 URL (SIGNED_URL_SECONDS). 만료되면 다시 조회한다.
+    url: str | None = None
+    created_at: datetime = Field(alias="createdAt")
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}

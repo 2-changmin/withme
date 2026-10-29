@@ -1,43 +1,62 @@
 """reference_views 작업 처리 함수. MOCK_GEMINI 상태로 돌려 Gemini를 부르지 않는다."""
+import uuid
 from types import SimpleNamespace
 
 import pytest
 
+from app import media, pets
 from app.errors import AppError, ErrorCode
 from app.worker.handlers import JobContext, reference_views
 
+pytestmark = pytest.mark.db
+
 
 @pytest.fixture
-def media(tmp_path, monkeypatch):
-    settings = SimpleNamespace(local_media_dir=str(tmp_path), mock_gemini=True)
-    monkeypatch.setattr(reference_views, "get_settings", lambda: settings)
+def pet(storage, monkeypatch):
+    settings = SimpleNamespace(mock_gemini=True)
     monkeypatch.setattr(reference_views.gemini_views, "get_settings", lambda: settings)
-    return tmp_path
+    user_id = uuid.uuid4()
+    return user_id, pets.create(user_id, "콩이")["id"]
 
 
-def run(payload):
+def run(pet, payload):
+    user_id, pet_id = pet
     seen = []
-    return reference_views.handle(JobContext({"payload": payload}, seen.append)), seen
+    job = {"user_id": user_id, "payload": {"petId": str(pet_id), **payload}}
+    return reference_views.handle(JobContext(job, seen.append)), seen
 
 
-def test_saves_four_views_and_reports(media):
-    src = reference_views.save_media(b"photo", "image/jpeg")
+def test_saves_four_views_and_reports(pet):
+    src = media.save_generated(*pet, b"photo", "image/jpeg", source_type="upload")
 
-    result, seen = run({"petId": "p1", "referenceViewId": "rv1", "sourceMediaIds": [src]})
+    result, seen = run(pet, {"referenceViewId": "rv1", "sourceMediaIds": [src]})
 
     assert result["referenceViewId"] == "rv1"
     assert len(result["viewMediaIds"]) == 4
-    assert all(reference_views.load_media(m)[0] == b"photo" for m in result["viewMediaIds"])
+    for m in result["viewMediaIds"]:
+        assert media.load(m, pet[1])[0] == b"photo"
+        row = media.get(m)
+        assert row["source_type"] == "generated_visual" and str(row["parent_id"]) == src
     assert result["problems"] == {}
     assert seen[0] == 5 and seen[-1] == 95
+
+
+def test_rejects_other_pets_photo(pet):
+    other = uuid.uuid4()
+    src = media.save_generated(other, pets.create(other, "두부")["id"], b"photo", "image/jpeg",
+                               source_type="upload")
+    with pytest.raises(AppError) as e:
+        run(pet, {"sourceMediaIds": [src]})
+    assert e.value.code == ErrorCode.VALIDATION_FAILED
 
 
 @pytest.mark.parametrize("payload,code", [
     ({"sourceMediaIds": []}, ErrorCode.VALIDATION_FAILED),
     ({"sourceMediaIds": ["missing"]}, ErrorCode.VALIDATION_FAILED),
+    ({"sourceMediaIds": [str(uuid.uuid4())]}, ErrorCode.VALIDATION_FAILED),
     ({"sourceMediaIds": ["x"], "attempt": 4}, ErrorCode.LIMIT_EXCEEDED),
 ])
-def test_rejects_bad_payload(media, payload, code):
+def test_rejects_bad_payload(pet, payload, code):
     with pytest.raises(AppError) as e:
-        run(payload)
+        run(pet, payload)
     assert e.value.code == code

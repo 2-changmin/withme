@@ -38,6 +38,22 @@
 | `GET/POST/PATCH/DELETE /memories` | 추억 앨범 |
 | `GET /pets/:id/sounds`, `PATCH /sounds/:id` | 잘린 소리 조각 조회, 보호자 태그 수정·빼기 |
 
+### 업로드 흐름 (F03, #30)
+
+1. `POST /pets/:id/uploads` `{"mimeType", "sizeBytes"}` → `{"mediaId", "uploadUrl", "method": "PUT", "headers"}`
+2. 앱이 `uploadUrl`에 `headers`를 붙여 파일 본문을 `PUT`
+3. `POST /media/:id/finalize` → 실제 크기 재확인 후 `media_check` 작업 등록 → `{"jobId"}`
+4. `GET /media/:id` → `status`(`pending`·`uploaded`·`ready`·`rejected`)와 짧은 만료(기본 300초) 서명 `url`
+
+| 종류 | 형식 | 장당 | 반려견당 |
+|---|---|---|---|
+| 사진 | jpeg·png·webp·heic·heif | 10MB | 10장 |
+| 영상 | mp4·mov | 100MB | 3개 |
+| 소리 | m4a·mp3·wav·aac | 20MB | 5개 |
+
+전체 300MB. 상한은 `backend/app/media.py`의 `KINDS`·`TOTAL_BYTES`에 있다.
+작업자는 `media.load(id, pet_id)`, `media.save_generated(...)`, `media.signed_url(id)`(Meshy에 넘길 URL)만 쓴다.
+
 ## 작업 종류 (작업 큐) — 박재현
 
 | 종류 | 처리 코드 담당 | 하는 일 |
