@@ -14,6 +14,7 @@ dependencies = [
     "google-genai>=2.33",
     "pillow>=11",
     "mediapipe>=1.2",  # 기기 안 강아지 검출 (원본을 외부로 보내지 않기 위해)
+    "rembg[cpu]>=2.0.86",  # 기기 안 물건 누끼 (#76)
 ]
 
 [project.optional-dependencies]

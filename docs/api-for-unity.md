@@ -58,6 +58,12 @@
 ⑤ GET  /character-models/{id}/joints           자동 추정 관절 (준비 전에는 409 → 3초 뒤 다시)
    POST /character-models/{id}/rig             보정한 관절로 리깅 → jobId
    GET  /jobs/{jobId}                          succeeded → result.riggedGlbUrl  ← glTFast로 로드
+
+⑥ 나의 방 물건 (장난감·간식·애착자리)
+   POST /pets/{petId}/items                    {"kind": "toy", "sourceMediaId"} → itemId, jobId (누끼)
+   GET  /pets/{petId}/items?kind=toy           목록. status: cutting → cutout → generating → ready
+   POST /pets/{petId}/toys/gacha               (포인트 차감 확인 화면 뒤) → itemId, jobId
+   GET  /pets/{petId}/items                    뽑힌 장난감이 ready가 되면 glbUrl ← glTFast로 로드
 ```
 
 ## API별 요약
@@ -106,6 +112,27 @@
 | `reference_views` | `referenceViewId`, `views` [옆, 앞, 뒤, 기타 순서의 URL 4개], `problems` (검사에 걸린 면) |
 | `meshy_generate` | `characterModelId`, `glbUrl` |
 | `rig` | `characterModelId`, `riggedGlbUrl`, `skeletonVersion` |
+| `item_cutout` | `itemId`, `cutoutUrl` |
+| `item_views` | `itemId`, `views` [4] |
+
+### 나의 방 물건 (#76)
+
+| API | 요청 | 응답 |
+|---|---|---|
+| `POST /pets/{petId}/items` | `{"kind": "toy"\|"snack"\|"bed", "sourceMediaId": "..."}` (업로드한 사진 1장) | `202 {"itemId", "jobId"}` |
+| `GET /pets/{petId}/items` | `?kind=toy` (생략하면 전부) | `[Item]` (올린 순서) |
+| `POST /pets/{petId}/toys/gacha` | | `202 {"itemId", "jobId"}`. 후보 4개 미만이면 409 |
+
+- `Item`: `{"id", "kind", "status", "cutoutUrl", "glbUrl", "jobId", "createdAt"}`
+  - `status`: `cutting`(누끼 중) → `cutout`(누끼 완료) → `generating`(4면·3D 중) → `ready`(`glbUrl` 있음)
+  - `cutoutUrl`은 투명 배경 PNG. 장난감 목록·가챠 화면에 2D로 보여 준다
+- **장난감**은 누끼까지만 만든다. 가챠를 돌려야 그중 1개가 3D가 된다
+  - 가챠 버튼: `kind=toy`, `status=cutout`인 장난감이 **4개 이상**일 때만 켠다
+  - 이미 3D가 된 장난감은 다시 뽑히지 않는다
+  - 포인트는 화면 연출만 한다. 서버에는 포인트가 없다
+  - 가챠 요청에 `Idempotency-Key`를 붙이면, 두 번 눌러도 한 번만 뽑힌다
+- **간식·애착자리**는 누끼가 끝나면 자동으로 3D까지 만든다
+- 진행 상황은 `GET /jobs/{jobId}`로도 볼 수 있지만, 단계마다 jobId가 바뀌므로 목록의 `status`를 보는 편이 쉽다
 
 `Joints` 형식은 [04-api-data.md](04-api-data.md) "관절 데이터 형식"을 따른다. 좌표는 정면 +Z, 바닥 y=0, 키 1로 정규화한 값이고, 왼쪽 관절만 보낸다.
 
