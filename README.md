@@ -50,6 +50,7 @@
 | [08-quality-ethics.md](docs/08-quality-ethics.md) | 성공 지표, 인수 테스트, 윤리·개인정보, 열린 질문 |
 | [auth-for-unity.md](docs/auth-for-unity.md) | Unity 로그인 연동: Supabase 인증 코드 요청·검증·갱신 순서, 오류 코드 |
 | [Unity 작업 계획](unity/docs/work-plan.md) | 초기 설정·화면·연동·검증 순서 |
+| [모바일 구현·배포 명세](unity/docs/mobile-platform.md) | Unity 단독 Android 앱, 모바일 대응·빌드·APK 배포 기준 |
 | [이슈 #6 실행 계획](unity/docs/issues/U01-issue-6-initial-setup.md) | 현재 설정 점검 결과와 초기 설정 완료 조건 |
 | [UI 와이어프레임](unity/docs/wireframe/README.md) | 화면 구조·문구·등록 후 3D 메인과 통합 메뉴 |
 
@@ -116,14 +117,16 @@ ruff check app tests
 | 한글 폰트 | Noto Sans KR Regular | 원본·OFL 라이선스·기본 378자 정적 폰트·동적 fallback 포함. 아틀라스 각각 1024 |
 | 입력 | Input System **1.19.0** | 새 Input System + UI 입력 모듈. 에디터에서 포인터 이벤트로 버튼 반응 검증. 실기기 터치는 미검증 |
 | 에셋 관리 | Force Text, Visible Meta Files, Git LFS | 에디터 설정 확인. 생성 폴더 제외·바이너리 LFS 규칙 적용 |
-| Android | IL2CPP, ARM64, 최소 API 23 / 대상 API 자동 | 현재 PC에 Android 빌드 모듈 없음. APK·실기기는 U02 이후 검증 |
+| Android | IL2CPP, ARM64, 최소 API 23 / 대상 API 자동 | Android Build Support·SDK·NDK·JDK 설치 완료. PC 걷기 검증 완료, APK·실기기 검증은 보류 |
 | 테스트 | Unity Test Framework **1.6.0** | 패키지 설치됨. 기능 테스트 미실행 |
 | 에디터 연결 | Unity 공식 플러그인 + Pipeline **0.9.1-exp.1** | CLI·MCP 연결 검증 기록 있음. 일반 실행에는 CLI·MCP 불필요 |
-| 추후 연동 | glTFast, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | glTFast·앱 통신·인증 구현은 후속 작업. Newtonsoft Json 3.2.1은 현재 간접 의존성 |
+| GLB·추후 연동 | glTFast **6.14.1**, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | #7 샘플 런타임 로드·공용 걷기 에디터 검증 완료. 앱 통신·인증은 후속 작업. Newtonsoft Json 3.2.1은 간접 의존성 |
 
 현재는 **초기 설정과 SVG UI 설계 단계**다. 이슈 #6에서 프로젝트·TMP·한글 폰트·입력 검증 씬과 Git 관리 규칙을 준비했다. 로그인·사진 등록·강아지 생성·상호작용이 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
 
 초기 프로젝트는 `unity` 브랜치의 `b22441c1`에 등록했다. 새 체크아웃의 LFS 복원·컴파일·폰트·씬 참조를 검증했으며, 최초 임포트 시간 초과와 CLI 배치 명령 우회 방법은 [이슈 #6 실행 기록](unity/docs/issues/U01-issue-6-initial-setup.md)에 남겼다.
+
+사용자 제공 강아지 샘플의 런타임 로드·공용/내장 걷기 비교는 `Assets/Scenes/CharacterPlaybackValidation.unity`에서 확인한다. 대기 클립과 기준 폰 재생·FPS는 미확인이며 [#7 실행 기록](unity/docs/issues/U02-issue-7-character-playback.md)을 따른다.
 
 ## 개발 시작하기 (Unity)
 

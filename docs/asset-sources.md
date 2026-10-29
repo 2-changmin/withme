@@ -19,3 +19,12 @@
 ## Unity 기본 템플릿
 
 기존 URP 프로젝트의 SampleScene·Settings·TutorialInfo를 유지했다. 이번 초기 설정에서 제3자 강아지 모델·애니메이션·상용 UI 에셋을 추가하지 않았다. 이후 외부 에셋을 추가할 때는 출처·라이선스·사용 범위를 여기에 기록한다.
+
+## #7 사용자 제공 강아지 검증 샘플
+
+- 수령일: 2026-10-29. 사용자 첨부 `meshy_result+walk.zip`의 `01a18145_rigged_walk.glb`.
+- 용도: 런타임 GLB 로드·공용 걷기·Android 개발 검증. 제품용 최종 모델이나 표준 뼈대 확정본이 아니다.
+- 파일: `unity/withme_frontend/Assets/Validation/Character/Source/DogWalk.glb`, 동일 바이트의 실행용 `Assets/StreamingAssets/Validation/DogWalk.glb`.
+- 원본 SHA-256: `58c96215009bd871cce4205ce12e74b06a68794ace3d9aa150c86b6694256aba`. GLB 원본은 변경하지 않았다.
+- 파생물: 원본 Walk에서 추출한 SampleSharedWalk.anim과 빌드용 재질 참조. 새 대기 동작·음원은 추가하지 않았다.
+- 제공 정보상 Meshy 모델과 Blender 리깅·걷기 결과이며 제작자·별도 라이선스 문서는 ZIP에 없다. 공개 재배포·제품 최종 에셋 채택 전에 제작자·이용 조건을 확인한다.
