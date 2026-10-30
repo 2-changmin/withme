@@ -1,8 +1,9 @@
 # U06 / #10 — 4면 확인·생성 진행·이어하기
 
-- 작업일: 2026-10-30. 이슈: [#10](https://github.com/2-changmin/withme/issues/10), OPEN.
+- 작업일: 2026-10-30. 이슈: [#10](https://github.com/2-changmin/withme/issues/10), CLOSED(COMPLETED), 2026-10-30 종료.
 - 사용자 지시: 제공한 4면 PNG·GLB를 목 서버로 연결. 실제 Gemini·Meshy 호출, 새 APK, 리깅·걷기 구현은 이번 범위에 포함하지 않는다.
 - 상태: 구현·목 HTTP/PC 검증 완료. 사용자 직접 확인·실서버 생성·Android 검증은 미실행.
+- 종료 근거: `b7923599`를 unity에 푸시한 뒤 최신 완료 조건 3개와 구현·검증 기록을 대조해 체크했다. [종료 댓글](https://github.com/2-changmin/withme/issues/10#issuecomment-6518901170)에 목 서버·PC 검증과 실제 생성·Android 미검증 범위를 구분했다.
 
 ## 구현
 
