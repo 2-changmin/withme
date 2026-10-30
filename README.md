@@ -120,9 +120,9 @@ ruff check app tests
 | Android | IL2CPP, ARM64, 최소 API 23 / 대상 API 자동 | Android Build Support·SDK·NDK·JDK 설치 완료. PC 걷기 검증 완료, APK·실기기 검증은 보류 |
 | 테스트 | Unity Test Framework **1.6.0** | 패키지 설치됨. 기능 테스트 미실행 |
 | 에디터 연결 | Unity 공식 플러그인 + Pipeline **0.9.1-exp.1** | CLI·MCP 연결 검증 기록 있음. 일반 실행에는 CLI·MCP 불필요 |
-| GLB·추후 연동 | glTFast **6.14.1**, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | #7 샘플 런타임 로드·공용 걷기 에디터 검증 완료. 앱 통신·인증은 후속 작업. Newtonsoft Json 3.2.1은 간접 의존성 |
+| GLB·통신·인증 | glTFast **6.14.1**, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | #7 샘플 걷기 및 #8 통신·세션·로그인 UI의 PC 목 검증 완료. 실제 OTP 로그인·기기 저장은 미검증. Newtonsoft Json 3.2.1은 간접 의존성 |
 
-현재는 **초기 설정과 SVG UI 설계 단계**다. 이슈 #6에서 프로젝트·TMP·한글 폰트·입력 검증 씬과 Git 관리 규칙을 준비했다. 로그인·사진 등록·강아지 생성·상호작용이 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
+현재는 **초기 설정·샘플 재생·로그인 기반 구현 단계**다. #8에서 이메일 코드 화면·통신·세션·Android 암호화 저장 브리지를 구현하고 PC에서 목 검증했다. 실제 이메일 OTP와 기기 보안 저장소는 미검증이며, 사진 등록·강아지 생성·상호작용까지 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
 
 초기 프로젝트는 `unity` 브랜치의 `b22441c1`에 등록했다. 새 체크아웃의 LFS 복원·컴파일·폰트·씬 참조를 검증했으며, 최초 임포트 시간 초과와 CLI 배치 명령 우회 방법은 [이슈 #6 실행 기록](unity/docs/issues/U01-issue-6-initial-setup.md)에 남겼다.
 
@@ -141,7 +141,9 @@ ruff check app tests
 
 2. Unity Hub에서 **Add → Add project from disk**로 `unity/withme_frontend/`를 추가하고 **6000.0.76f1**로 연다. 다른 에디터 버전으로 자동 업그레이드하지 않는다.
 3. 첫 실행의 패키지 다운로드·임포트·컴파일이 끝날 때까지 기다린다. Console에 컴파일 오류가 없는지 확인한다. 패키지 기준은 `Packages/manifest.json`과 `Packages/packages-lock.json`이다.
-4. 기본 장면은 `Assets/Scenes/SampleScene.unity`다. 한글·입력 확인은 **`Assets/Scenes/SetupValidation.unity`**를 열고 Game View를 세로형 **390 × 844**로 맞춘 뒤 Play로 실행한다. 한글 문구가 정상 표시되고 버튼을 누르면 **‘입력 확인 완료’**로 바뀌어야 한다. 클릭할 때는 Game View에 포커스를 둔다. 검증 씬은 제품 UI가 아니며 Build Settings에는 기본 장면만 유지했다.
+4. 제품 시작 장면은 **`Assets/Withme/Scenes/Start.unity`**다. Game View를 세로형 **390 × 844**로 맞추고 Play한다. 제공된 publishable 키를 연결 설정에 반영했으며, 실제 로그인은 초대된 이메일로 사용자가 요청·수신한 코드로 확인한다. 메일 없이 UI를 확인하려면 Play 종료 후 LoginFlow의 `useDemoResponses`를 켜고 예제 이메일·코드 `123456`을 사용한다. 이 모드는 목 검증이며 실제 로그인이 아니다. PC는 메모리 저장소라 Play 종료 시 로그인이 초기화된다. [#8 실행 기록](unity/docs/issues/U03-issue-8-auth-plan.md)을 따른다.
+
+   기존 SampleScene과 검증 씬은 유지했다. 한글·입력만 확인하려면 `Assets/Scenes/SetupValidation.unity`에서 ‘입력 확인’ 버튼을 눌러 ‘입력 확인 완료’로 바뀌는지 확인한다. 클릭할 때는 Game View에 포커스를 둔다.
 5. TMP 기본 리소스·폰트 설정은 프로젝트에 포함돼 있어 새 PC에서 다시 생성하지 않는다. 기본 폰트는 `Assets/Fonts/NotoSansKR/NotoSansKR-UI.asset`, 사용자 이름용 보조 폰트는 `NotoSansKR-Dynamic.asset`이다. 폰트 출처·라이선스는 [에셋 출처](docs/asset-sources.md), UI 설계는 [전체 SVG](unity/docs/wireframe/00-overview.svg)를 확인한다.
 
 Unity 화면 작업에는 백엔드 실행이 필수는 아니다. 실제 API 연동을 시작할 때는 위 백엔드 절차로 서버를 실행하고 [연결 기준](unity/docs/integration.md)과 [인증 문서](docs/auth-for-unity.md)를 따른다. Android 실기기에서 PC API에 접근할 때는 PC의 LAN 주소나 `adb reverse`를 사용한다. 기기 자체의 `localhost`를 PC 주소로 사용하지 않는다.

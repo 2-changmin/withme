@@ -1,0 +1,7 @@
+<linker>
+  <assembly fullname="Assembly-CSharp">
+    <type fullname="Withme.Auth.AuthSession" preserve="all" />
+    <type fullname="Withme.Auth.AuthUser" preserve="all" />
+    <type fullname="Withme.Auth.Pet" preserve="all" />
+  </assembly>
+</linker>

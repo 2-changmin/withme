@@ -30,3 +30,12 @@ unity command build status --caller plugin --skill unity-cli --project-path ./un
 # 빌드가 완료되거나 실패한 뒤 원복
 unity command script run --caller plugin --skill unity-cli --project-path ./unity/withme_frontend -- --file ../tools/character-probe-build-settings.cs --entry CharacterProbeBuildSettings.Restore
 ```
+
+## #8 로그인·통신 검증
+
+- `create-login-scene.cs` / `CreateLoginScene.Run`: 최초 제품 Start 씬·연결 설정 생성. 기존 씬은 덮어쓰지 않는다.
+- `verify-auth.cs` / `VerifyAuth.Run`: 통신·세션·갱신 경쟁·저장 실패·401 재요청 상한을 목으로 검사한다. Play Mode가 필요 없다.
+- `verify-login-view.cs` / `VerifyLoginView.Run`: Start 씬 Play 중 실행. 실제 임시 Input System 포인터로 화면 흐름을 검사한다. 테스트 전송을 주입하며 실제 메일을 보내지 않는다. 종료 시 입력 설정·장치를 복원한다. 테스트가 끝난 Play 세션은 목 모드이므로 실제 메일 로그인 전에 Play를 종료하고 다시 시작한다.
+- `verify-auth-live.cs` / `VerifyAuthLive.Run`: 실제 배포 서버의 `/health`와 미인증 `/pets`만 GET으로 조회한다. 이메일·토큰·사용자 자료를 보내지 않는다.
+
+실행 형식은 `unity command script run --caller plugin --skill unity-cli --project-path ./unity/withme_frontend -- --file ../tools/verify-auth.cs --entry VerifyAuth.Run`이며 UI 검증은 파일·entry를 해당 도구로 바꾼다. 결과·실제 로그인 방법·모바일 미검증 범위는 [#8 기록](../docs/issues/U03-issue-8-auth-plan.md)을 따른다.
