@@ -1,8 +1,9 @@
 # U04·U05 / #9 — 등록·사진 업로드 작업 계획
 
 - 작성일: 2026-10-30
-- 이슈: [#9 — 등록·업로드 화면](https://github.com/2-changmin/withme/issues/9), OPEN, 마감 2026-11-01.
+- 이슈: [#9 — 등록·업로드 화면](https://github.com/2-changmin/withme/issues/9), CLOSED(COMPLETED), 2026-10-30 종료, 마감 2026-11-01.
 - 상태: 등록·업로드 구현 및 PC 자동 검증 완료. 실제 계정 업로드·Android 갤러리·사용자 화면 확인은 미실행. 실서버 사용자 자료를 생성하지 않았다.
+- 종료 근거: 구현 커밋 `dcc06a48`을 최신 완료 조건 2개와 대조해 체크하고 [검증·미검증 범위 댓글](https://github.com/2-changmin/withme/issues/9#issuecomment-6517716693)을 남겼다. 실제 계정·실기기 검증 완료를 뜻하지 않는다.
 - 기반: #8 커밋 `fba2c566`, 배포 OpenAPI와 최신 `main`의 [Unity API 안내](https://github.com/2-changmin/withme/blob/main/docs/api-for-unity.md).
 - 목표: 로그인 후 이름·사진을 준비하고, 사진별 전송 진행률·실패·재시도를 제공해 #10에 사용할 `petId`·`mediaId`를 전달한다.
 

@@ -41,6 +41,8 @@ F07의 Blender 리깅 자체와 서버 작업자는 외부 의존성이다. 이 
 
 ## 다음 작업
 
+2026-10-30 #9의 최신 완료 조건 2개를 커밋 `dcc06a48`·PC 검증 기록과 대조해 체크하고 이슈를 CLOSED(COMPLETED)로 종료했다. [종료 댓글](https://github.com/2-changmin/withme/issues/9#issuecomment-6517716693)에 실제 계정 업로드·Android 갤러리·기기 확인 미실행과 APK 보류를 명시했다. 미검증 항목은 후속 통합·기기 인수에서 확인한다.
+
 2026-10-30 #9 등록·사진 업로드를 Start 씬에 구현했다. 이름·사진 필수, 전송 전 정적 안내·로컬 사진 모드, NativeGallery, 티켓→PUT→finalize→상태 확인, 사진별 재시도·취소·세션 정리를 연결했다. PC 핵심 8개 묶음·로컬 파일 전송 3개·등록 UI 7개, 기존 로그인 핵심 8개·UI 7개를 통과했다. 실제 계정 업로드·Android 갤러리·사용자 화면 확인은 남아 있고 APK는 보류한다. #10은 `UploadsReady`·`PetId`·`CompletedMediaIds`에서 이어간다. finalize 결과가 불명확하면 중복 실행 없이 GET으로 확인한다. [#9 기록](issues/U04-issue-9-registration-upload-plan.md).
 
 2026-10-30 #8 통신·로그인 화면을 구현했다. 제품 시작 씬은 `Assets/Withme/Scenes/Start.unity`, 기본값은 실제 연결이다. 제공된 publishable 키는 읽기 전용 Auth 설정 조회로 확인했다. PC 통신/세션 8개 검사 묶음·UI 7개 흐름·공개 API/미인증 요청을 통과했으나 실제 이메일 OTP 로그인과 Android Keystore 동작은 미확인이다. #9 등록 화면과 최종 확정 모델/작업 복원 계약 연결이 다음 의존성이다. [#8 기록](issues/U03-issue-8-auth-plan.md).
