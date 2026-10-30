@@ -38,3 +38,9 @@
 - 크기별 짖음 `bark_size/`: 중형 `medium_01`·`medium_02`, 대형 `large_01`·`large_02`. 소형견은 `greet_01`·`greet_02`·`fetch_01`을 쓴다.
 - 출처: Freesound. 모두 CC0 1.0(퍼블릭 도메인)이라 수정·상업적 이용이 가능하고 출처 표시는 필요 없다. 원본 링크·사용 구간은 같은 폴더 `SOURCE.md`에 기록했다.
 - 가공: 무음 제거, 음량 통일(동작 소리 -18 LUFS, 생활 소리 -20 LUFS·최대 4초), 모노 ogg(44.1kHz) 변환.
+
+## NativeGallery — #9 사진 선택
+
+- 출처: [yasirkula/UnityNativeGallery](https://github.com/yasirkula/UnityNativeGallery), MIT License. 저작권·라이선스는 패키지의 `LICENSE`를 유지한다.
+- 버전: 1.9.5, 커밋 `6fdfae30629814b22b971453d87665d10e1c2ed4` 고정. UPM ID `com.yasirkula.nativegallery`.
+- 범위: Android/iOS 사진 선택과 축소 미리보기. PC 에디터는 Unity 파일 선택창을 사용한다. 패키지 설치·컴파일은 확인했으며 기기 권한·포맷 지원은 미검증이다.

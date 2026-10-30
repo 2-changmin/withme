@@ -23,6 +23,7 @@ namespace Withme.UI
         public TMP_Text emailError, codeError, recipientLabel, resultTitle, resultDescription, modeLabel, resendLabel;
         public TMP_Text[] codeDigits;
         public Button sendButton, verifyButton, resendButton, backButton, retryButton, logoutButton;
+        public Button registrationButton;
         public RectTransform safeArea, emailInputRect, codeInputRect;
         public ScrollRect scroll;
         public readonly UnityEvent RegistrationRequested = new UnityEvent();
@@ -165,6 +166,11 @@ namespace Withme.UI
                 Show(LoginScreen.Email);
             });
         }
+        public void ContinueRegistration()
+        {
+            if (!Busy && Session != null && Session.IsAuthenticated && LastPets != null && LastPets.Length == 1)
+                RegistrationRequested.Invoke();
+        }
         async Task ResolveAsync(CancellationToken cancellation)
         {
             SetResult(LoginScreen.Checking, "로그인을 확인했어요", "등록된 정보를 확인하고 있어요.");
@@ -241,6 +247,11 @@ namespace Withme.UI
             backButton.interactable = true;
             retryButton.interactable = !Busy;
             logoutButton.interactable = !Busy;
+            if (registrationButton != null)
+            {
+                registrationButton.gameObject.SetActive(ScreenState == LoginScreen.NeedsStateCheck);
+                registrationButton.interactable = !Busy;
+            }
             resendLabel.text = wait > 0 ? $"코드 다시 받기 · {wait}초 후" : "코드 다시 받기";
             if (codeDigits != null)
                 for (var i = 0; i < codeDigits.Length; i++) codeDigits[i].text = i < codeInput.text.Length ? codeInput.text[i].ToString() : "";

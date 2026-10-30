@@ -122,7 +122,7 @@ ruff check app tests
 | 에디터 연결 | Unity 공식 플러그인 + Pipeline **0.9.1-exp.1** | CLI·MCP 연결 검증 기록 있음. 일반 실행에는 CLI·MCP 불필요 |
 | GLB·통신·인증 | glTFast **6.14.1**, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | #7 샘플 걷기 및 #8 통신·세션·로그인 UI의 PC 목 검증 완료. 실제 OTP 로그인·기기 저장은 미검증. Newtonsoft Json 3.2.1은 간접 의존성 |
 
-현재는 **초기 설정·샘플 재생·로그인 기반 구현 단계**다. #8에서 이메일 코드 화면·통신·세션·Android 암호화 저장 브리지를 구현하고 PC에서 목 검증했다. 실제 이메일 OTP와 기기 보안 저장소는 미검증이며, 사진 등록·강아지 생성·상호작용까지 연결된 앱은 아직 구현하지 않았다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다.
+현재는 **샘플 재생·로그인·사진 등록 구현 단계**다. #8 이메일 코드 화면·통신·세션에 이어 #9 이름·사진 선택·정적 전송 안내·업로드·재시도를 구현하고 PC에서 검증했다. 사진 선택은 NativeGallery **1.9.5**를 사용한다. 실제 이메일 OTP·실계정 업로드·Android 갤러리와 보안 저장소는 미검증이며, 강아지 생성·상호작용 연결은 후속 단계다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다. [#9 구현·검증 기록](unity/docs/issues/U04-issue-9-registration-upload-plan.md).
 
 초기 프로젝트는 `unity` 브랜치의 `b22441c1`에 등록했다. 새 체크아웃의 LFS 복원·컴파일·폰트·씬 참조를 검증했으며, 최초 임포트 시간 초과와 CLI 배치 명령 우회 방법은 [이슈 #6 실행 기록](unity/docs/issues/U01-issue-6-initial-setup.md)에 남겼다.
 

@@ -165,6 +165,15 @@ namespace Withme.Auth
                 session = value;
             }
         }
+        internal void Invalidate(string rejectedAccessToken)
+        {
+            lock (gate)
+            {
+                if (session == null || session.AccessToken != rejectedAccessToken) return;
+                epoch++; session = null; refresh = null;
+                try { store.Delete(); } catch { throw new ApiFailure("STORAGE", 0); }
+            }
+        }
         public async Task LogoutAsync(CancellationToken cancellation)
         {
             string access;
@@ -212,7 +221,12 @@ namespace Withme.Auth
             {
                 var renewed = await auth.RefreshAsync(token, cancellation);
                 // Exactly one replay for this read; a second 401 is propagated.
-                return await http.SendAsync<Pet[]>("GET", "pets", null, renewed.AccessToken, cancellation);
+                try { return await http.SendAsync<Pet[]>("GET", "pets", null, renewed.AccessToken, cancellation); }
+                catch (ApiFailure retryFailure) when (retryFailure.Status == 401)
+                {
+                    auth.Invalidate(renewed.AccessToken);
+                    throw new ApiFailure("SESSION_EXPIRED", 401);
+                }
             }
         }
     }

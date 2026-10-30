@@ -39,3 +39,12 @@ unity command script run --caller plugin --skill unity-cli --project-path ./unit
 - `verify-auth-live.cs` / `VerifyAuthLive.Run`: 실제 배포 서버의 `/health`와 미인증 `/pets`만 GET으로 조회한다. 이메일·토큰·사용자 자료를 보내지 않는다.
 
 실행 형식은 `unity command script run --caller plugin --skill unity-cli --project-path ./unity/withme_frontend -- --file ../tools/verify-auth.cs --entry VerifyAuth.Run`이며 UI 검증은 파일·entry를 해당 도구로 바꾼다. 결과·실제 로그인 방법·모바일 미검증 범위는 [#8 기록](../docs/issues/U03-issue-8-auth-plan.md)을 따른다.
+
+## #9 등록·사진 업로드 검증
+
+- `extend-registration-scene.cs` / `ExtendRegistrationScene.Run`: 기존 Start 씬에 등록 화면을 최초 추가한다. 이미 추가됐으면 중단하며 이후 수정은 에디터 API로 한다.
+- `verify-registration.cs` / `VerifyRegistration.Run`: 등록·사진 검증·업로드 상태·재시도·세션·DTO를 목으로 검사한다.
+- `verify-file-upload.cs` / `VerifyFileUpload.Run`: 임시 로컬 TCP 서버로 실제 UploadHandlerFile의 원시 바이트·헤더·403·취소를 확인한다. 로컬 HTTP 허용은 Editor에서만 가능하며 제품 업로드는 HTTPS다.
+- `verify-registration-view.cs` / `VerifyRegistrationView.Run`: Start 씬 Play에서 실제 임시 포인터·생성한 체크무늬 사진으로 등록·전송 안내·실패/재시도·사용자 변경 정리를 확인한다. 외부 전송은 없고 마지막에 목 화면을 남기므로 종료 후 Play를 다시 시작한다.
+
+실행 형식은 위 #8과 같고 파일·entry를 바꾼다. [#9 기록](../docs/issues/U04-issue-9-registration-upload-plan.md)에 실행 결과와 실제 갤러리 미검증 범위를 구분했다.

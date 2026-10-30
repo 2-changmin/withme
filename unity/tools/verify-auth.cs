@@ -157,8 +157,9 @@ public static class VerifyAuth
                 else Require(call.Headers["Authorization"] == "Bearer new-access", "Replayed old bearer.");
                 return Task.FromResult(Reply(401, "{\"error\":{\"code\":\"UNAUTHORIZED\"}}"));
             } };
-            await Failure(() => new PetClient(Client(transport), auth).ListAsync(None), "UNAUTHORIZED");
+            await Failure(() => new PetClient(Client(transport), auth).ListAsync(None), "SESSION_EXPIRED");
             Require(attempt == 2 && api.RefreshCalls == 1, "401 retry loop.");
+            Require(!auth.IsAuthenticated && store.Read() == null, "Repeated 401 retained a rejected session.");
         }
         passed.Add("pets Bearer / exactly one refresh and one replay");
         Require(!AuthService.ValidCode("１２３４５６") && !AuthService.ValidEmail("bad@") && AuthService.ValidCode("123456"), "Input validation failed.");

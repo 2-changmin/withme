@@ -3,5 +3,8 @@
     <type fullname="Withme.Auth.AuthSession" preserve="all" />
     <type fullname="Withme.Auth.AuthUser" preserve="all" />
     <type fullname="Withme.Auth.Pet" preserve="all" />
+    <type fullname="Withme.Registration.UploadTicket" preserve="all" />
+    <type fullname="Withme.Registration.MediaRecord" preserve="all" />
+    <type fullname="Withme.Registration.UploadJob" preserve="all" />
   </assembly>
 </linker>

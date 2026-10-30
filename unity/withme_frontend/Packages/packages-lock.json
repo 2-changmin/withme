@@ -238,6 +238,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.yasirkula.nativegallery": {
+      "version": "https://github.com/yasirkula/UnityNativeGallery.git#6fdfae30629814b22b971453d87665d10e1c2ed4",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "6fdfae30629814b22b971453d87665d10e1c2ed4"
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

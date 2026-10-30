@@ -13,6 +13,7 @@
     "com.unity.timeline": "1.8.12",
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.11",
+    "com.yasirkula.nativegallery": "https://github.com/yasirkula/UnityNativeGallery.git#6fdfae30629814b22b971453d87665d10e1c2ed4",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",

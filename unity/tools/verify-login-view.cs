@@ -92,6 +92,8 @@ public static class VerifyLoginView
             Require(flow.ScreenState == LoginScreen.NeedsRegistration && registrationEvents == 1 && flow.Session.IsAuthenticated,
                 "Unregistered user handoff failed.");
             checks++;
+            var registrationFlow = UnityEngine.Object.FindFirstObjectByType<RegistrationFlow>();
+            if (registrationFlow != null && registrationFlow.Visible) registrationFlow.Back();
             await Click(mouse, flow.logoutButton);
             await Until(() => !flow.Busy);
             Require(flow.ScreenState == LoginScreen.Email && !flow.Session.IsAuthenticated && flow.codeInput.text == "", "Logout failed.");

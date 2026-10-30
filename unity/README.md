@@ -7,7 +7,7 @@ Codex가 Unity 앱 전체를 맡아 이슈 단위로 구현하고, 사용자가 
 - Unity Hub에서 열 경로: `unity/withme_frontend/` (저장소 루트 기준).
 - 확인한 에디터 버전: **6000.0.76f1**. 실제 기준은 [ProjectVersion.txt](withme_frontend/ProjectSettings/ProjectVersion.txt).
 - URP, Input System, uGUI, Test Framework 패키지는 현재 manifest에 포함되어 있다. 설치 상태는 기능 구현·실행 검증 완료를 뜻하지 않는다.
-- Noto Sans KR 기본·동적 TMP 폰트와 검증 씬을 포함한다. glTFast 6.14.1로 샘플 로드·공용 걷기를 검증했다. Newtonsoft Json 3.2.1은 간접 의존성이다. #8 통신·로그인 UI·세션을 구현했으며 모바일 파일 선택은 후속 작업이다.
+- Noto Sans KR 기본·동적 TMP 폰트와 검증 씬을 포함한다. glTFast 6.14.1로 샘플 로드·공용 걷기를 검증했다. Newtonsoft Json 3.2.1은 간접 의존성이다. #8 통신·로그인·세션, #9 등록·사진 업로드와 NativeGallery 1.9.5 연결을 구현했다. 모바일 갤러리 동작은 기기에서 확인해야 한다.
 - 이 문서는 Unity 프로젝트 바깥인 `unity/`에 둔다. `Assets/`에 문서를 복사할 필요는 없다.
 
 ## 읽는 순서
@@ -19,6 +19,7 @@ Codex가 Unity 앱 전체를 맡아 이슈 단위로 구현하고, 사용자가 
 | [작업 계획](docs/work-plan.md) | 구현 순서, 의존성, 진행 상태 |
 | [모바일 구현·배포](docs/mobile-platform.md) | Unity 단독 Android 앱 구성, 화면·기기 기능·빌드·APK 배포 기준 |
 | [통신·로그인 구현 기록](docs/issues/U03-issue-8-auth-plan.md) | Start 씬·실제/목 로그인·PC 검증·미완료 연동 |
+| [등록·업로드 구현 기록](docs/issues/U04-issue-9-registration-upload-plan.md) | 이름·사진·정적 전송 안내·재시도·PC 검증·기기 미확인 항목 |
 | [연결 규격](docs/integration.md) | API·목 응답·GLB·뼈대 연결 기준 |
 | [검증·인수](docs/verification.md) | 기본 검증, 실기기 확인, 최종 성능 검사 |
 
