@@ -44,3 +44,11 @@
 - 출처: [yasirkula/UnityNativeGallery](https://github.com/yasirkula/UnityNativeGallery), MIT License. 저작권·라이선스는 패키지의 `LICENSE`를 유지한다.
 - 버전: 1.9.5, 커밋 `6fdfae30629814b22b971453d87665d10e1c2ed4` 고정. UPM ID `com.yasirkula.nativegallery`.
 - 범위: Android/iOS 사진 선택과 축소 미리보기. PC 에디터는 Unity 파일 선택창을 사용한다. 패키지 설치·컴파일은 확인했으며 기기 권한·포맷 지원은 미검증이다.
+
+## #10 사용자 제공 4면·정지 모델 목 결과
+
+- 수령일: 2026-10-30. `gate_4views_v2.zip`의 말티즈·골든 4면 각 4장과 `01a188ac-eabf-7218-ad93-66586a7fa971.glb`.
+- 저장 위치: `unity/withme_frontend/Assets/StreamingAssets/Validation/Generation/`. PNG·GLB 원본 바이트를 보존하며 Git LFS 규칙을 따른다.
+- 모델 SHA-256: `9a73ced06ae170dfabf42b3e86905e76537a5d3606f8bbc75f5130c6e37c88f7`. 크기 3,775,776바이트, 메시 1·스킨 0·애니메이션 0.
+- ZIP 설명은 윤승희→이창민의 4면 v2, side/front/back/other 방향과 말티즈 팀원 사진·골든 공개 사진으로 기재한다. 별도 라이선스 원문은 없어 공개 재배포 허가로 해석하지 않는다.
+- 사용 범위: 사용자가 지시한 로컬 목 생성·4면 확인·정지 모델 표시. 새 Gemini·Meshy 전송은 하지 않는다. 기본 결과는 골든 4면+GLB이며 말티즈 사진과 이 모델을 일치하는 결과로 표시하지 않는다.

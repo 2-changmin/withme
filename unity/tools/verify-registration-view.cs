@@ -73,6 +73,9 @@ public static class VerifyRegistrationView
         for (var i = 0; i < colors.Length; i++) colors[i] = ((i / 96 / 16 + i % 96 / 16) % 2 == 0) ? new Color(.4f,.6f,.4f) : new Color(.85f,.9f,.8f);
         texture.SetPixels(colors); texture.Apply(); File.WriteAllBytes(path, texture.EncodeToPNG()); UnityEngine.Object.Destroy(texture);
         var checks = new List<string>();
+        var generation = UnityEngine.Object.FindFirstObjectByType<GenerationFlow>();
+        var generationEnabled = generation != null && generation.enabled;
+        if (generation != null) { generation.Later(); generation.enabled = false; }
         try
         {
             await Login(login); Check(flow.Visible && flow.Page == RegistrationPage.Profile, "Login handoff missing");
@@ -118,6 +121,7 @@ public static class VerifyRegistrationView
         }
         finally
         {
+            if (generation != null) generation.enabled = generationEnabled;
             File.Delete(path); InputSystem.RemoveDevice(mouse); InputSystem.settings = original; UnityEngine.Object.Destroy(temporary);
         }
     }

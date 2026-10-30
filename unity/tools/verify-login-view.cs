@@ -64,6 +64,9 @@ public static class VerifyLoginView
         var registrationEvents = 0;
         UnityEngine.Events.UnityAction registration = () => registrationEvents++;
         flow.RegistrationRequested.AddListener(registration);
+        var generation = UnityEngine.Object.FindFirstObjectByType<GenerationFlow>();
+        var generationEnabled = generation != null && generation.enabled;
+        if (generation != null) { generation.Later(); generation.enabled = false; }
         try
         {
             var fixture = new Fixture(); long clock = 1000;
@@ -134,6 +137,7 @@ public static class VerifyLoginView
         }
         finally
         {
+            if (generation != null) generation.enabled = generationEnabled;
             flow.RegistrationRequested.RemoveListener(registration);
             InputSystem.RemoveDevice(mouse);
             InputSystem.settings = original;

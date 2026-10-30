@@ -20,6 +20,7 @@ Codex가 Unity 앱 전체를 맡아 이슈 단위로 구현하고, 사용자가 
 | [모바일 구현·배포](docs/mobile-platform.md) | Unity 단독 Android 앱 구성, 화면·기기 기능·빌드·APK 배포 기준 |
 | [통신·로그인 구현 기록](docs/issues/U03-issue-8-auth-plan.md) | Start 씬·실제/목 로그인·PC 검증·미완료 연동 |
 | [등록·업로드 구현 기록](docs/issues/U04-issue-9-registration-upload-plan.md) | 이름·사진·정적 전송 안내·재시도·PC 검증·기기 미확인 항목 |
+| [생성·복구 구현 기록](docs/issues/U06-issue-10-generation.md) | 사용자 제공 4면·GLB 목 서버, 생성 확인·진행·이어하기 |
 | [연결 규격](docs/integration.md) | API·목 응답·GLB·뼈대 연결 기준 |
 | [검증·인수](docs/verification.md) | 기본 검증, 실기기 확인, 최종 성능 검사 |
 
@@ -28,6 +29,8 @@ Codex가 Unity 앱 전체를 맡아 이슈 단위로 구현하고, 사용자가 
 기능 범위는 [기능 명세](../docs/01-features.md), 기술 선택은 [아키텍처](../docs/02-architecture.md), 3D 처리는 [3D 파이프라인](../docs/03-3d-pipeline.md), API는 [API 문서](../docs/04-api-data.md)를 따른다. 이 문서들은 상위 PRD를 대체하지 않는다.
 
 ## 현재 준비 상태
+
+#10은 사용자 제공 4면 사진과 정지 GLB를 로컬 목 HTTP 서버로 연결해 생성 확인·진행·사진 모드·재시작 복구를 PC에서 검증했다. Start 씬은 현재 목 로그인으로 설정했으며 코드 `123456`을 사용한다. 실제 생성·리깅·Android 확인은 별도다. [실행 방법과 검증 기록](docs/issues/U06-issue-10-generation.md).
 
 2026-10-29 이슈 #6 초기 설정을 마쳤다. 별도 `SetupValidation.unity`에서 한글·동적 fallback·Input System 버튼 반응을 검증했다. [시작하기](../README.md#개발-시작하기-unity)와 [실행 기록](docs/issues/U01-issue-6-initial-setup.md)을 따른다.
 

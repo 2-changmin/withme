@@ -64,17 +64,22 @@ namespace Withme.Networking
         readonly string publicKey;
         readonly bool auth;
         public JsonHttpClient(string baseUrl, IHttpTransport transport, int timeoutSeconds = 20,
-            string publishableKey = null, bool isAuth = false)
+            string publishableKey = null, bool isAuth = false, bool allowEditorLoopback = false)
         {
-            if (!Uri.TryCreate((baseUrl ?? "").TrimEnd('/') + "/", UriKind.Absolute, out origin) || origin.Scheme != "https")
+            if (!Uri.TryCreate((baseUrl ?? "").TrimEnd('/') + "/", UriKind.Absolute, out origin))
                 throw new ApiFailure("CONFIGURATION", 0);
+            var schemeAllowed = origin.Scheme == "https";
+#if UNITY_EDITOR
+            schemeAllowed |= allowEditorLoopback && origin.IsLoopback && origin.Scheme == "http";
+#endif
+            if (!schemeAllowed || origin.UserInfo.Length != 0 || origin.Query.Length != 0 || origin.Fragment.Length != 0) throw new ApiFailure("CONFIGURATION", 0);
             this.transport = transport;
             timeout = Math.Max(5, timeoutSeconds);
             publicKey = publishableKey;
             auth = isAuth;
         }
 
-        public async Task<T> SendAsync<T>(string method, string path, object body, string bearer, CancellationToken cancellation)
+        public async Task<T> SendAsync<T>(string method, string path, object body, string bearer, CancellationToken cancellation, string idempotencyKey = null)
         {
             cancellation.ThrowIfCancellationRequested();
             if (Uri.TryCreate(path, UriKind.Absolute, out _) || path.StartsWith("//"))
@@ -95,6 +100,11 @@ namespace Withme.Networking
                 call.Headers["apikey"] = publicKey;
             }
             if (!string.IsNullOrEmpty(bearer)) call.Headers["Authorization"] = "Bearer " + bearer;
+            if (idempotencyKey != null)
+            {
+                if (!Guid.TryParse(idempotencyKey, out _)) throw new ApiFailure("CONFIGURATION", 0);
+                call.Headers["Idempotency-Key"] = idempotencyKey;
+            }
             var reply = await transport.SendAsync(call, cancellation);
             cancellation.ThrowIfCancellationRequested();
             if (reply.NetworkError) throw new ApiFailure("NETWORK", 0);

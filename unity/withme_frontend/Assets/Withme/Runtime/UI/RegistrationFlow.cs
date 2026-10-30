@@ -195,6 +195,7 @@ namespace Withme.UI
             Visible = false; registrationCanvas.SetActive(false); loginCanvas.SetActive(true);
             if (login.Session == null || !login.Session.IsAuthenticated) login.ChangeEmail();
         }
+        public void LeaveForGeneration() { if (!selecting) Hide(); }
         void SetPage(RegistrationPage page)
         {
             Page = page;

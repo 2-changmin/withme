@@ -48,3 +48,12 @@ unity command script run --caller plugin --skill unity-cli --project-path ./unit
 - `verify-registration-view.cs` / `VerifyRegistrationView.Run`: Start 씬 Play에서 실제 임시 포인터·생성한 체크무늬 사진으로 등록·전송 안내·실패/재시도·사용자 변경 정리를 확인한다. 외부 전송은 없고 마지막에 목 화면을 남기므로 종료 후 Play를 다시 시작한다.
 
 실행 형식은 위 #8과 같고 파일·entry를 바꾼다. [#9 기록](../docs/issues/U04-issue-9-registration-upload-plan.md)에 실행 결과와 실제 갤러리 미검증 범위를 구분했다.
+
+## #10 목 생성·복구
+
+- `generation-mock-server.py`: `python unity/tools/generation-mock-server.py`로 로컬 목 서버 실행. 8765 포트·골든 4면·제공 GLB, 외부 API 호출 없음.
+- `extend-generation-scene.cs` / `ExtendGenerationScene.Run`: 기존 Start 씬에 생성 화면을 최초 추가. 이미 있으면 중단한다.
+- `verify-generation.cs` / `VerifyGeneration.Run`: 생성·복구 핵심 목 검증.
+- `verify-generation-view.cs`: `Run` 전체 PC 흐름, `ResumeAfterRestart` 완료 모델 복구, `PreparePending`/`ResumePending` 진행 중 복구, `Failure` 한도 실패 사진 모드.
+
+실행·별도 실패 서버·기기 미검증 범위는 [#10 기록](../docs/issues/U06-issue-10-generation.md)을 따른다. 로컬 목 서버는 Editor 전용이며 Android용 서버로 사용하지 않는다.

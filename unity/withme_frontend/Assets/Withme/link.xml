@@ -1,5 +1,9 @@
 <linker>
   <assembly fullname="Assembly-CSharp">
+    <type fullname="Withme.Generation.GenerationJob" preserve="all" />
+    <type fullname="Withme.Generation.AcceptedJob" preserve="all" />
+    <type fullname="Withme.Generation.GenerationSession" preserve="all" />
+    <type fullname="Withme.Generation.GenerationApi+PhotoResult" preserve="all" />
     <type fullname="Withme.Auth.AuthSession" preserve="all" />
     <type fullname="Withme.Auth.AuthUser" preserve="all" />
     <type fullname="Withme.Auth.Pet" preserve="all" />
