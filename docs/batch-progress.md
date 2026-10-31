@@ -76,3 +76,11 @@
 - 실패 전용 목 PID 15660(8768)은 종료했다. 재현 시 rig-mock-server.py --port 8768 --duration 1 --rig-fail로 시작한다.
 - repeat session 32393, quality experiment 97918, pending resume 53757, 방 검증 86286 및 캡처 59477/94262는 모두 완료. 실행 중인 Blender 작업은 없다.
 - 검사 JSON·재생성/실험/캡처는 무시되는 Temp/batch 아래에 보존했다. 실제 사용자 사진 경로·비밀 키·서명 URL을 새 기록에 남기지 않았다.
+
+## 2026-10-31 사용자 후속 지시: 커밋·푸시·이슈 판정
+
+- 구현/검증/사용자 확인 문서를 `8445ade4`로 origin/unity에 푸시했다. main 병합은 하지 않았다.
+- #1/#2/#5/#11/#12/#13 조건을 대조해 체크리스트·검증 근거와 한계를 기록하고 종료했다.
+- #3/#4/#7/#8/#15/#17/#52는 미충족 조건이 있어 OPEN을 유지했다. 실제 저장은 #24 의존이다.
+- 사용자 검증 목록: unity/docs/user-verification.md. 상세 이슈 링크: batch-issue-audit.md.
+- 기존 미추적 blender/work-plan.md는 수정/커밋하지 않고 보존했다. 자동 실행 예약은 PAUSED를 유지했다.
