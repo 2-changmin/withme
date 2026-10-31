@@ -50,6 +50,8 @@
 | [08-quality-ethics.md](docs/08-quality-ethics.md) | 성공 지표, 인수 테스트, 윤리·개인정보, 열린 질문 |
 | [auth-for-unity.md](docs/auth-for-unity.md) | Unity 로그인 연동: Supabase 인증 코드 요청·검증·갱신 순서, 오류 코드 |
 | [Unity 작업 계획](unity/docs/work-plan.md) | 초기 설정·화면·연동·검증 순서 |
+| [리깅·동작·Unity 일괄 실행 계획](docs/batch-implementation-plan.md) | 첨부 리깅 자료 통합, 세부 작업 55개, 실행 순서·검증·외부 의존성 |
+| [일괄 구현 인수 기록](docs/batch-acceptance.md) | 실제 PC·목 검증, 품질 경고와 외부 API/기기 대기 항목 |
 | [모바일 구현·배포 명세](unity/docs/mobile-platform.md) | Unity 단독 Android 앱, 모바일 대응·빌드·APK 배포 기준 |
 | [이슈 #6 실행 계획](unity/docs/issues/U01-issue-6-initial-setup.md) | 현재 설정 점검 결과와 초기 설정 완료 조건 |
 | [UI 와이어프레임](unity/docs/wireframe/README.md) | 화면 구조·문구·등록 후 3D 메인과 통합 메뉴 |
@@ -122,7 +124,7 @@ ruff check app tests
 | 에디터 연결 | Unity 공식 플러그인 + Pipeline **0.9.1-exp.1** | CLI·MCP 연결 검증 기록 있음. 일반 실행에는 CLI·MCP 불필요 |
 | GLB·통신·인증 | glTFast **6.14.1**, `UnityWebRequest`, Newtonsoft Json, Supabase Auth | #7 샘플 걷기 및 #8 통신·세션·로그인 UI의 PC 목 검증 완료. 실제 OTP 로그인·기기 저장은 미검증. Newtonsoft Json 3.2.1은 간접 의존성 |
 
-현재는 **샘플 재생·로그인·사진 등록 구현 단계**다. #8 이메일 코드 화면·통신·세션에 이어 #9 이름·사진 선택·정적 전송 안내·업로드·재시도를 구현하고 PC에서 검증했다. 사진 선택은 NativeGallery **1.9.5**를 사용한다. 실제 이메일 OTP·실계정 업로드·Android 갤러리와 보안 저장소는 미검증이며, 이후 #10에서 사용자 제공 4면·정지 GLB로 생성 흐름·재시작 복구를 로컬 목 HTTP 서버에서 검증했다. 실제 생성·리깅·상호작용 연결은 후속 단계다. 위 표의 에디터 검증은 Android 빌드·실기기 통과를 뜻하지 않는다. [#9 구현·검증 기록](unity/docs/issues/U04-issue-9-registration-upload-plan.md).
+현재는 **리깅·관절/외형 수정·습관·3D 방의 PC 목 구현과 검증을 마친 상태**다. 로그인·사진 등록·4면 확인에 이어 Blender 4.2.0 재리깅, 3체형·17클립 공용 재생, 선택적 수정, 방 상호작용·기본 소리·단일 메뉴를 연결했다. 품질 미승인 모델은 확정과 일반 방 진입을 막으며, 독립 방 검사는 별도 검증 경로를 쓴다. 실제 생성 API·최종 저장 API·실제 계정·Android 갤러리/보안 저장·실기기는 미검증이다. [일괄 인수 기록](docs/batch-acceptance.md)에서 품질 경고와 완료 경계를 확인한다.
 
 초기 프로젝트는 `unity` 브랜치의 `b22441c1`에 등록했다. 새 체크아웃의 LFS 복원·컴파일·폰트·씬 참조를 검증했으며, 최초 임포트 시간 초과와 CLI 배치 명령 우회 방법은 [이슈 #6 실행 기록](unity/docs/issues/U01-issue-6-initial-setup.md)에 남겼다.
 
@@ -148,6 +150,8 @@ ruff check app tests
 
 Unity 화면 작업에는 백엔드 실행이 필수는 아니다. 실제 API 연동을 시작할 때는 위 백엔드 절차로 서버를 실행하고 [연결 기준](unity/docs/integration.md)과 [인증 문서](docs/auth-for-unity.md)를 따른다. Android 실기기에서 PC API에 접근할 때는 PC의 LAN 주소나 `adb reverse`를 사용한다. 기기 자체의 `localhost`를 PC 주소로 사용하지 않는다.
 
-등록·확정이 끝난 사용자는 앱을 열 때 강아지가 있는 **3D 메인**으로 진입하고, 상호작용 외 기능은 **통합 메뉴**로 제공하는 방향으로 설계했다. 현재 와이어프레임에서는 추억 앨범을 제외했으며, 이는 상위 PRD 전체에서 앨범 기능을 삭제했다는 뜻은 아니다.
+표준 동작만 확인하려면 `Assets/Withme/Scenes/StandardRigValidation.unity`를 연다. 제품 화면의 생성→자동 걷기에는 `unity/tools/rig-mock-server.py`(기본 포트 8767)를 실행한다. 로컬 Blender 실행 파일을 `--blender`로 지정하며 자세한 절차와 독립 방 검사는 [PC 검증 안내](unity/docs/standard-rig-validation.md)를 따른다.
 
-커밋 대상은 `Assets/`와 `.meta`, `Packages/`, `ProjectSettings/`, Unity 작업 문서·설정 도구다. `Library/`, `Temp/`, `Logs/`, `Obj/`, `UserSettings/`, IDE 생성 파일·빌드 결과는 프로젝트의 `.gitignore`에서 제외한다. `.gitattributes`는 `fbx/glb/png/wav/mp3/otf/ttf`를 LFS로 관리한다. 씬·프리팹·`.asset`·`.meta`는 텍스트로 유지하며, 커밋 전 등록 대상과 LFS 상태를 확인한다.
+등록·확정이 끝난 사용자의 **3D 메인** 진입과 **통합 메뉴**를 목 경로에 구현했다. 실제 등록/확정 상태의 조회·복원은 #24 API와 품질 승인 연결 뒤 검증한다. 이번 범위에서는 추억 앨범을 제외했으며, 상위 PRD 전체에서 삭제한 것은 아니다.
+
+커밋 대상은 `Assets/`와 `.meta`, `Packages/`, `ProjectSettings/`, Unity 작업 문서·설정 도구다. `Library/`, `Temp/`, `Logs/`, `Obj/`, `UserSettings/`, IDE 생성 파일·빌드 결과는 프로젝트의 `.gitignore`에서 제외한다. `.gitattributes`는 `fbx/blend/glb/png/wav/mp3/otf/ttf`를 LFS로 관리한다. 씬·프리팹·`.asset`·`.meta`는 텍스트로 유지하며, 커밋 전 등록 대상과 LFS 상태를 확인한다.

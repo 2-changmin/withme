@@ -1,0 +1,150 @@
+{
+  "validatedAtKst": "2026-10-31",
+  "scope": "Unity PC and local mock only",
+  "qualityApproved": false,
+  "androidTested": false,
+  "reports": {
+    "unity-standard-rig.json": {
+      "passed": 102,
+      "models": 3,
+      "clips": 17,
+      "sourceModes": 2,
+      "maxJointError": 2.46207577e-07,
+      "maxPositionDrift": 0.0,
+      "maxLoopAngle": 0.0,
+      "qualityApproved": false
+    },
+    "unity-rig-core.json": {
+      "passed": 9,
+      "cases": [
+        "strict joint JSON",
+        "copy and coordinate roundtrip",
+        "disk failure prevents POST",
+        "live lost response never reposts",
+        "fixture resume stores job",
+        "cross model response rejected",
+        "atomic checkpoint and user isolation",
+        "Unity HTTP rig, 17 clips, quality preserved, scale invariant pelvis",
+        "non GLB response rejected and fresh job URL reload recovers"
+      ]
+    },
+    "unity-rig-view.json": {
+      "passed": 9,
+      "cases": [
+        "saved generation resumes into automatic walk with quality gate",
+        "actual advancing skinned walk",
+        "optional 10 point guidance and mirrored markers",
+        "entry exit midpoint, single and multiple surface rejection",
+        "marker projection after orbit and zoom",
+        "Input System pointer drag edits prepared mesh depth",
+        "prepared mesh hit, reset and cancel preserve accepted input",
+        "submit returns to walk and duplicate input reuses same rig job",
+        "changed canonical joint runs local Blender and returns to unapproved walk"
+      ],
+      "qualityApproved": false,
+      "deviceTested": false
+    },
+    "unity-appearance.json": {
+      "passed": 6,
+      "cases": [
+        "optional original photo and rigged preview comparison",
+        "bounded parameters and copied coat texture/material",
+        "17 clips keep finite skin after length/head/ear/tail changes; visual quality unapproved",
+        "cancel restores previous parameters and exact source materials",
+        "use returns to movement review without final confirmation",
+        "reset uses model neutral proportions"
+      ],
+      "qualityApproved": false
+    },
+    "unity-preferences.json": {
+      "passed": 5,
+      "cases": [
+        "unapproved real rig cannot confirm or enter preferences",
+        "fixture confirmation idempotency, failed update preservation and user isolation",
+        "one question, required choice, previous and next retain answers",
+        "partial preferences resume first unanswered question",
+        "final answer explicit completion and one room request, actual quality unchanged"
+      ],
+      "approvedContractFixtureOnly": true,
+      "actualRigQualityApproved": false
+    },
+    "unity-room.json": {
+      "passed": 13,
+      "cases": [
+        "actual unapproved result blocks regular room even with stale approved profile",
+        "explicit isolated functional room fixture, quality flag preserved",
+        "greet approaches, returns idle and rejects simultaneous actions",
+        "head chin belly one-shot reactions return idle",
+        "toy chase and return in 3 to 6 seconds with bounded motion",
+        "sit stand lie fall asleep sleep wake get up ordered transitions",
+        "single menu stops actions, persists mute and reduces motion",
+        "photo and 3D share one menu and suppress photo-mode audio",
+        "immediate exit stops all activity; reentry always shows 3D main",
+        "pause clears action ownership and resumes safely idle",
+        "actual pointer menu open close and interaction buttons",
+        "actual skinned dog surface pointer selects pet reaction",
+        "logout clears prior user model settings audio and reveals email screen"
+      ],
+      "verificationOnly": true,
+      "actualQualityApproved": false,
+      "toySeconds": 3.00254822
+    },
+    "unity-rig-failure.json": {
+      "passed": 3,
+      "cases": [
+        "failed rig status check keeps the same job and confirmation gate",
+        "explicit failed-job retry creates one new attempt",
+        "rig failure preserves original photo and job checkpoint"
+      ],
+      "productionCalls": 0
+    },
+    "unity-rig-stress.json": {
+      "models": 3,
+      "singleBoneBends": 96,
+      "appearanceClipCases": 51,
+      "warnings": [],
+      "qualityApproved": false
+    },
+    "unity-assets.json": {
+      "scenes": 2,
+      "requiredComponents": 7,
+      "errors": []
+    },
+    "repeat-results.json": [
+      {
+        "channels": 578,
+        "maxChannelDelta": 0,
+        "meshUvNormalIndicesEqual": true,
+        "skinWeightsAndBindMatricesEqual": true,
+        "model": "m1_golden",
+        "reused": true,
+        "qualityApproved": false
+      },
+      {
+        "channels": 578,
+        "maxChannelDelta": 0,
+        "meshUvNormalIndicesEqual": true,
+        "skinWeightsAndBindMatricesEqual": true,
+        "model": "m2_white",
+        "reused": true,
+        "qualityApproved": false
+      },
+      {
+        "channels": 578,
+        "maxChannelDelta": 0,
+        "meshUvNormalIndicesEqual": true,
+        "skinWeightsAndBindMatricesEqual": true,
+        "model": "m3_cream",
+        "reused": true,
+        "qualityApproved": false
+      }
+    ]
+  },
+  "additionalChecks": [
+    "completed and in-flight rig Play restart keeps job/model IDs",
+    "later resume keeps job and restores walk",
+    "photo loading logout prevents late user image/audio",
+    "Blender contract and worker unit tests: 17 passed",
+    "HTTP mock tests: 3 groups passed"
+  ]
+}

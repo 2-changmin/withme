@@ -1,0 +1,321 @@
+{
+  "createdAt": "2026-10-30",
+  "source": "User supplied archives; archive documents are reference data, not instructions",
+  "jointContract": "docs/04-api-data.md",
+  "sourceLicense": "No separate license grant verified; local project use requested by user",
+  "archives": [
+    {
+      "name": "dog-rig.zip",
+      "bytes": 180110282,
+      "sha256": "2e1ce179722e102a8554745e450daa0c9314a9ad0ef1aba9be1b17fadff2295b"
+    },
+    {
+      "name": "dog_sounds.zip",
+      "bytes": 483154,
+      "sha256": "68b9577f17252eed389e113b65c725eadef53af69f7ec9f8538cb7471366716e"
+    }
+  ],
+  "copiedFiles": [
+    {
+      "source": "dog-rig/blender/dogrig/animations.py",
+      "path": "blender/dogrig/animations.py",
+      "bytes": 8988,
+      "sha256": "2b81db64bc2df8dd45df345dde57cd04f172a95f373af3c689c37462ef9b8b1e"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/contact.py",
+      "path": "blender/dogrig/contact.py",
+      "bytes": 7703,
+      "sha256": "15eadaa9d4308c81442c211fbef36f264fe1b7cc2e7c446e9d621c768da0c035"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/export.py",
+      "path": "blender/dogrig/export.py",
+      "bytes": 2622,
+      "sha256": "cfaa8ec9b5eca07cc0dcf08342e8319fd274f52c6c497609ffd7b46ffa68486c"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/landmarks.py",
+      "path": "blender/dogrig/landmarks.py",
+      "bytes": 5259,
+      "sha256": "1df10388e510d7b2acfd17e49cf4f7a91cc088fafc2dbe5f7705ad565dddca2e"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/poses.py",
+      "path": "blender/dogrig/poses.py",
+      "bytes": 24297,
+      "sha256": "4c609c571fa5a6146a5f9c6ca885b5b2adb51bb8a6bf653629d3911864ee6965"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/prepare.py",
+      "path": "blender/dogrig/prepare.py",
+      "bytes": 2974,
+      "sha256": "8c4ea3d0facbe3010ef047f477dd7250d60fd5555b0b64767e24bb31dba0f74a"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/skeleton.py",
+      "path": "blender/dogrig/skeleton.py",
+      "bytes": 6029,
+      "sha256": "f701eb09fe13956fb200ca68bd32330ea58be8524009d850641a843ad3daad5f"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/validate.py",
+      "path": "blender/dogrig/validate.py",
+      "bytes": 4920,
+      "sha256": "6f05d6c9b7c8ca7c6dd4fa725a127dfb6feeaa7aef027fdb906d3bac87d096a7"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/weights.py",
+      "path": "blender/dogrig/weights.py",
+      "bytes": 10087,
+      "sha256": "eddf79a46fc9abadfaea59ed102e5b75367ba5f17c3cf34aaa167d4ddb6bed39"
+    },
+    {
+      "source": "dog-rig/blender/dogrig/__init__.py",
+      "path": "blender/dogrig/__init__.py",
+      "bytes": 367,
+      "sha256": "fa99a17a98757b5daa81007cfec8b45c8965be1cae57534bb667976436bde29c"
+    },
+    {
+      "source": "dog-rig/blender/estimate_landmarks.py",
+      "path": "blender/estimate_landmarks.py",
+      "bytes": 1381,
+      "sha256": "4e41ffd1b65896484d643bcc4549a6abd10449ec7374e1a775a07acbec0b6615"
+    },
+    {
+      "source": "dog-rig/blender/landmarks_from_blend.py",
+      "path": "blender/landmarks_from_blend.py",
+      "bytes": 807,
+      "sha256": "07d2039d4b54d5cfddf489a4d8f4a130a4a2df9622010e91f704a1f1939bb8ef"
+    },
+    {
+      "source": "dog-rig/blender/poses/lie.json",
+      "path": "blender/poses/lie.json",
+      "bytes": 3517,
+      "sha256": "f5601ccb178960298fda503c8e4110a23083cdd58f93cc63741fa7dc9af51175"
+    },
+    {
+      "source": "dog-rig/blender/rig.py",
+      "path": "blender/source_rig.py",
+      "bytes": 5813,
+      "sha256": "6e3eb615208dcfb78f56ce7e1d5c905f3cbdc4da3178ddcf5f8643338bfb0f15"
+    },
+    {
+      "source": "dog-rig/README.md",
+      "path": "blender/vendor-notes/README.md",
+      "bytes": 9042,
+      "sha256": "8731fd20e74e82d705900c2fd9ef6cddf6547ff1306a018da16c819e68540bbe"
+    },
+    {
+      "source": "dog-rig/HANDOFF.md",
+      "path": "blender/vendor-notes/HANDOFF.md",
+      "bytes": 7517,
+      "sha256": "9ac90844bac61644a2949b9ed04cdc513bbd1d4cb2c351ce5deb3f34f30c0449"
+    },
+    {
+      "source": "dog-rig/CORRECTIONS.md",
+      "path": "blender/vendor-notes/CORRECTIONS.md",
+      "bytes": 5926,
+      "sha256": "a01666972c6cb66a62e944f3031985f9b14085fe6b0ca73aac0c1f89cf5d5537"
+    },
+    {
+      "source": "dog-rig/docs/skeleton-spec.md",
+      "path": "blender/vendor-notes/docs-skeleton-spec.md",
+      "bytes": 3043,
+      "sha256": "9d6cdf058bf7c133fed63dc3c1167273ec8fa814a9abe249c18f2dc5cccff87b"
+    },
+    {
+      "source": "dog-rig/docs/landmarks-format.md",
+      "path": "blender/vendor-notes/docs-landmarks-format.md",
+      "bytes": 2027,
+      "sha256": "cbbcecb4b9651c7a43675d1dc714deba2170ad1af7fd05ec8c4dc9761e23579f"
+    },
+    {
+      "source": "dog-rig/input/m1_golden.glb",
+      "path": "blender/fixtures/source/m1_golden.glb",
+      "bytes": 5031912,
+      "sha256": "f20c7bf4f7740dbcbe72104925844aefa81c775623deab9ae6182026f31882b0"
+    },
+    {
+      "source": "dog-rig/output_corrected/m1_golden/m1_golden_rigged.glb",
+      "path": "blender/fixtures/rigged/m1_golden/m1_golden_rigged.glb",
+      "bytes": 6987804,
+      "sha256": "77468533868308e9d29e317454084d8e07b9f9ade4035a6ac3cabaef5d4b52a5"
+    },
+    {
+      "source": "dog-rig/output_corrected/m1_golden/report.json",
+      "path": "blender/fixtures/rigged/m1_golden/report.json",
+      "bytes": 15320,
+      "sha256": "379707d7b58a59bb8586a3fac70c16e121e4d20628eadaea59fde6a2ad273ac6"
+    },
+    {
+      "source": "dog-rig/output_corrected/m1_golden/landmarks.json",
+      "path": "blender/fixtures/rigged/m1_golden/landmarks.json",
+      "bytes": 1353,
+      "sha256": "e0546980c90ced40f87560dc931ec92d941ce475020db595c20c9692f0be3617"
+    },
+    {
+      "source": "dog-rig/input/m2_white.glb",
+      "path": "blender/fixtures/source/m2_white.glb",
+      "bytes": 4221520,
+      "sha256": "f35111975b3cb341cd664e0d6bafb7aea4080fb0e61883d22e51889d477c1801"
+    },
+    {
+      "source": "dog-rig/output_corrected/m2_white/m2_white_rigged.glb",
+      "path": "blender/fixtures/rigged/m2_white/m2_white_rigged.glb",
+      "bytes": 5985168,
+      "sha256": "bf66913b0a10c419c0d940440993fd355322e3fb01c9d52d2f8a2cf2d6444dcf"
+    },
+    {
+      "source": "dog-rig/output_corrected/m2_white/report.json",
+      "path": "blender/fixtures/rigged/m2_white/report.json",
+      "bytes": 15306,
+      "sha256": "666982392e2f5fe482607f755717dc9d525a2cba15f64540fa2a5033addd7970"
+    },
+    {
+      "source": "dog-rig/output_corrected/m2_white/landmarks.json",
+      "path": "blender/fixtures/rigged/m2_white/landmarks.json",
+      "bytes": 1347,
+      "sha256": "248075e78694c03d74509d6d13a7bdc8c784f04250d6d1d8f8c3bb8374480099"
+    },
+    {
+      "source": "dog-rig/input/m3_cream.glb",
+      "path": "blender/fixtures/source/m3_cream.glb",
+      "bytes": 3777268,
+      "sha256": "fad29c47365a26aef5ec54c1fa04e29489a14e4fae769fbd5dc8dfb826cc9b82"
+    },
+    {
+      "source": "dog-rig/output_corrected/m3_cream/m3_cream_rigged.glb",
+      "path": "blender/fixtures/rigged/m3_cream/m3_cream_rigged.glb",
+      "bytes": 5093144,
+      "sha256": "f59d7f3832bb9808c435bc656b7d0bd44cd11687345a75bc76a9436dd55cba9a"
+    },
+    {
+      "source": "dog-rig/output_corrected/m3_cream/report.json",
+      "path": "blender/fixtures/rigged/m3_cream/report.json",
+      "bytes": 16153,
+      "sha256": "1fa4fb011dbe95b2345e77d0762d30bd36f6bce807afe449cf1e823584c7292d"
+    },
+    {
+      "source": "dog-rig/output_corrected/m3_cream/landmarks.json",
+      "path": "blender/fixtures/rigged/m3_cream/landmarks.json",
+      "bytes": 1349,
+      "sha256": "adc9be0c814aff63b807e3aa91df9ea54d8f6567b46d5a1384483de97501bc05"
+    }
+  ],
+  "audio": [
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/idle_01.ogg",
+      "sha256": "c1a642416b0055d98182e7d3c078d37bcc460be3515152ebaa409c363e79938e",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/greet_01.ogg",
+      "sha256": "34193c7f3f871f25d4e1ded0717167ccd1aea2b96d756d923cd42abb6d8962bf",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/greet_02.ogg",
+      "sha256": "ae8ca6e5773d7ca8aa2752b78e8cf4c40fd6d99db5309071be15afdad5f4a320",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/fetch_01.ogg",
+      "sha256": "8484f86da3a7d197260c2cf6db75cef8c27842df367e0a50bb03e1e70260c0ce",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/pet_01.ogg",
+      "sha256": "a4d28ef9df1c21fb0428dbd2186cdb61faaff85b9d76aa1b31e64498d0c584bb",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/pet_02.ogg",
+      "sha256": "9c6e8f5b8876158066704c2db40ce25311ef5477ff195b2a4da313210134c311",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/bark_size/medium_02.ogg",
+      "sha256": "d063d5f4d7209519b0e35d8d1a30a3f3a9e452cb5c085965b086329994a5f539",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/bark_size/large_01.ogg",
+      "sha256": "b3d93072f71faeed0b0236a1ad991eb5a2d6a4980421f021cc1ca9857ace241e",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/bark_size/medium_01.ogg",
+      "sha256": "5f548178a3364ba64b636e8fdc7d100765da1e1ce1ef2c34c349f6407173e548",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/bark_size/large_02.ogg",
+      "sha256": "a4864b90b8143c1e1ea2e3d38fe1fb93098ef594ddb9e72a89f811f7ededd760",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/sniff_01.ogg",
+      "sha256": "ec844a7f6c6c7bd2cae25113f1b8ea9b221cd780964c1da9b34c2819e9abe6cf",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/sniff_02.ogg",
+      "sha256": "7a429f476371d57dc653e6765a8315dbe406b87e9f1bb3eecb7d8cc7d5d1f2ae",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/steps_01.ogg",
+      "sha256": "261a93a3a2789e52699e94ffbf7e524a0ce026225dc7bde62a55d6b5aa2e1915",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/lick_01.ogg",
+      "sha256": "4232dc525ad3cfa1e55ca0866c22d22bfc72360a4bcdd662488c124ae367042c",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/steps_03.ogg",
+      "sha256": "9ba2885c4cedb60180fddf3866d4a9ee59efbd36409a531ad6f59919606a2723",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/steps_02.ogg",
+      "sha256": "157af3b2777be427132fa7c71e9619eb9fe09fb9c8fab170179196ce2f97c119",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/yawn_02.ogg",
+      "sha256": "3661a7bc94ad7f1aef8300d9247b1bd3c98d06a3c6770faf496cdb7aeb7a2948",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/yawn_01.ogg",
+      "sha256": "54e64dd6c50c1b6617ffe2769f94f8aa47459d2c8dfc668380c3320c691a8682",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/shake_02.ogg",
+      "sha256": "30c1a9b8fa4a8a6dce9ffd2226f0522e7395b9f40a8c260c6d07db4c4c2f89c5",
+      "matchesRepository": true
+    },
+    {
+      "path": "unity/withme_frontend/Assets/Resources/Sounds/Dog/life/shake_01.ogg",
+      "sha256": "a7636db29ae210e92ff5ff209eea8aa11fb3f0933068ebd9b98f54b6eabc6cad",
+      "matchesRepository": true
+    }
+  ],
+  "exclusions": [
+    "backups",
+    "output old/trial/repeat",
+    "audit rendered images",
+    "pyc",
+    "blend1",
+    "source work-plan"
+  ],
+  "quality": "Supplied corrected outputs are needs_review, accepted false; independently unverified",
+  "blenderVersions": {
+    "sourceReports": "5.2.3 LTS",
+    "workerDockerfile": "4.2.0"
+  }
+}

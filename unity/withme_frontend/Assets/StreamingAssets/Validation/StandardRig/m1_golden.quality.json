@@ -1,0 +1,147 @@
+{
+  "model": "m1_golden",
+  "skeletonVersion": 1,
+  "sha256": "f7bbb535c082983d49e770b4884cfc5f2f09bbc803ef36a0b45203803a8eeab1",
+  "status": "needs_review",
+  "quality": {
+    "accepted": false,
+    "issue_count": 13,
+    "requires_visual_review": true,
+    "automatic_correction_bounded": true
+  },
+  "clips": {
+    "Idle": {
+      "loop": true,
+      "issues": []
+    },
+    "Walk": {
+      "loop": true,
+      "issues": []
+    },
+    "Trot": {
+      "loop": true,
+      "issues": []
+    },
+    "Greet": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.982
+        }
+      ]
+    },
+    "PetHead": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.725
+        }
+      ]
+    },
+    "PetChin": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.732
+        }
+      ]
+    },
+    "PetBelly": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.834
+        }
+      ]
+    },
+    "HeadTilt": {
+      "loop": false,
+      "issues": []
+    },
+    "SitDown": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.754
+        }
+      ]
+    },
+    "SitIdle": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.757
+        }
+      ]
+    },
+    "StandUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.754
+        }
+      ]
+    },
+    "LieDown": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.702
+        }
+      ]
+    },
+    "LieIdle": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.732
+        }
+      ]
+    },
+    "Sleep": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.792
+        }
+      ]
+    },
+    "GetUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.702
+        }
+      ]
+    },
+    "FallAsleep": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.762
+        }
+      ]
+    },
+    "WakeUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.762
+        }
+      ]
+    }
+  }
+}

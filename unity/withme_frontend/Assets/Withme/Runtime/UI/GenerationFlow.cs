@@ -43,6 +43,7 @@ namespace Withme.UI
         readonly List<Texture2D> textures = new List<Texture2D>();
         string lastError;
         bool paused, resumeAfterPause;
+        bool handedToRig;
 #if UNITY_EDITOR
         public string VerificationDirectory;
 #endif
@@ -85,8 +86,14 @@ namespace Withme.UI
         public void Resume()
         {
             if (Busy || Coordinator == null) return;
+            handedToRig = false;
             Run(Continue);
         }
+        public void LeaveForRig()
+        {
+            handedToRig = true; canvas.SetActive(false); ClearAssets(); Controls();
+        }
+        public void OfferResumeFromLogin(){handedToRig=false;Controls();}
         public void Approve() => Submit("approve");
         public void RetryViews() => Submit("retry");
         void Submit(string action)
@@ -193,7 +200,7 @@ namespace Withme.UI
             approveButton.interactable = !Busy && Coordinator?.Session.Stage == "review" && Coordinator.Session.PendingAction == null;
             retryButton.interactable = approveButton.interactable && Coordinator.Session.Retries < 3;
             recoverButton.interactable = !Busy && Coordinator != null && lastError != "LIMIT_EXCEEDED";
-            resumeButton.gameObject.SetActive(Coordinator != null && login.Session != null && login.Session.IsAuthenticated && !Visible);
+            resumeButton.gameObject.SetActive(!handedToRig && Coordinator != null && login.Session != null && login.Session.IsAuthenticated && !Visible);
             resumeButton.interactable = !Busy;
         }
         void ClearAssets()
@@ -208,7 +215,7 @@ namespace Withme.UI
             {
                 cancellation?.Cancel(); canvas.SetActive(false); Coordinator = null; ClearAssets();
                 if (Busy) return;
-                boundAuth = login.Session; store = null; api = null;
+                boundAuth = login.Session; store = null; api = null; handedToRig = false;
             }
             if (boundAuth == null || !boundAuth.IsAuthenticated) { if (Visible) Later(); Coordinator = null; store = null; Controls(); return; }
             if (!login.Busy && Coordinator == null && store == null)

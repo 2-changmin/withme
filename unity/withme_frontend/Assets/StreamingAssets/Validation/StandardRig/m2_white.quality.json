@@ -1,0 +1,107 @@
+{
+  "model": "m2_white",
+  "skeletonVersion": 1,
+  "sha256": "bbfb7d1ec893bbe277e17de3cbf5df30d1c106f490f77e504d2883cf86d56bb8",
+  "status": "needs_review",
+  "quality": {
+    "accepted": false,
+    "issue_count": 5,
+    "requires_visual_review": true,
+    "automatic_correction_bounded": true
+  },
+  "clips": {
+    "Idle": {
+      "loop": true,
+      "issues": []
+    },
+    "Walk": {
+      "loop": true,
+      "issues": []
+    },
+    "Trot": {
+      "loop": true,
+      "issues": []
+    },
+    "Greet": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.729
+        }
+      ]
+    },
+    "PetHead": {
+      "loop": false,
+      "issues": []
+    },
+    "PetChin": {
+      "loop": false,
+      "issues": []
+    },
+    "PetBelly": {
+      "loop": false,
+      "issues": []
+    },
+    "HeadTilt": {
+      "loop": false,
+      "issues": []
+    },
+    "SitDown": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.314
+        }
+      ]
+    },
+    "SitIdle": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.319
+        }
+      ]
+    },
+    "StandUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.314
+        }
+      ]
+    },
+    "LieDown": {
+      "loop": false,
+      "issues": []
+    },
+    "LieIdle": {
+      "loop": true,
+      "issues": []
+    },
+    "Sleep": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.608
+        }
+      ]
+    },
+    "GetUp": {
+      "loop": false,
+      "issues": []
+    },
+    "FallAsleep": {
+      "loop": false,
+      "issues": []
+    },
+    "WakeUp": {
+      "loop": false,
+      "issues": []
+    }
+  }
+}

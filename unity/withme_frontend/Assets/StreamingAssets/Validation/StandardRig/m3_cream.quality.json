@@ -1,0 +1,182 @@
+{
+  "model": "m3_cream",
+  "skeletonVersion": 1,
+  "sha256": "8d53ea89d453293885f25d53dc307ca3cefd29a038144d85192f44668b1e506e",
+  "status": "needs_review",
+  "quality": {
+    "accepted": false,
+    "issue_count": 18,
+    "requires_visual_review": true,
+    "automatic_correction_bounded": true
+  },
+  "clips": {
+    "Idle": {
+      "loop": true,
+      "issues": []
+    },
+    "Walk": {
+      "loop": true,
+      "issues": []
+    },
+    "Trot": {
+      "loop": true,
+      "issues": []
+    },
+    "Greet": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.771
+        }
+      ]
+    },
+    "PetHead": {
+      "loop": false,
+      "issues": []
+    },
+    "PetChin": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.607
+        }
+      ]
+    },
+    "PetBelly": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.618
+        }
+      ]
+    },
+    "HeadTilt": {
+      "loop": false,
+      "issues": []
+    },
+    "SitDown": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "GROUND_PENETRATION",
+          "min_z": -0.0175
+        },
+        {
+          "code": "STRETCH",
+          "ratio": 1.482
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.L",
+          "range": [
+            -0.01748,
+            0.00112
+          ]
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.R",
+          "range": [
+            -0.01736,
+            0.00103
+          ]
+        }
+      ]
+    },
+    "SitIdle": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.49
+        }
+      ]
+    },
+    "StandUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "GROUND_PENETRATION",
+          "min_z": -0.0175
+        },
+        {
+          "code": "STRETCH",
+          "ratio": 1.482
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.L",
+          "range": [
+            -0.01749,
+            0.00113
+          ]
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.R",
+          "range": [
+            -0.0174,
+            0.00103
+          ]
+        }
+      ]
+    },
+    "LieDown": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.678
+        }
+      ]
+    },
+    "LieIdle": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.696
+        }
+      ]
+    },
+    "Sleep": {
+      "loop": true,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.795
+        }
+      ]
+    },
+    "GetUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.678
+        }
+      ]
+    },
+    "FallAsleep": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.787
+        }
+      ]
+    },
+    "WakeUp": {
+      "loop": false,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.787
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,777 @@
+{
+  "input": "C:\\Users\\rksek\\Desktop\\dog-rig\\input\\m3_cream.glb",
+  "skeletonVersion": 1,
+  "blender": "5.2.3 LTS",
+  "pipelineVersion": "contact-v2",
+  "input_sha256": "fad29c47365a26aef5ec54c1fa04e29489a14e4fae769fbd5dc8dfb826cc9b82",
+  "normalize": {
+    "steps": [],
+    "translate_before_scale": [
+      -0.014437,
+      -0.000699,
+      0.73786
+    ],
+    "scale": 0.677765,
+    "original_height": 1.475437
+  },
+  "mesh": {
+    "verts": 22298,
+    "faces": 31163,
+    "non_manifold_edges": 12105
+  },
+  "landmark_source": "estimated",
+  "bone_lengths": {
+    "root": 0.1836,
+    "pelvis": 0.1102,
+    "spine_01": 0.2938,
+    "spine_02": 0.235,
+    "spine_03": 0.2056,
+    "neck_01": 0.1181,
+    "neck_02": 0.1181,
+    "head": 0.2126,
+    "jaw": 0.1756,
+    "ear_01.L": 0.1459,
+    "ear_02.L": 0.1459,
+    "ear_01.R": 0.1459,
+    "ear_02.R": 0.1459,
+    "shoulder.L": 0.2268,
+    "upper_arm.L": 0.1486,
+    "forearm.L": 0.1372,
+    "front_paw.L": 0.1315,
+    "shoulder.R": 0.2268,
+    "upper_arm.R": 0.1486,
+    "forearm.R": 0.1372,
+    "front_paw.R": 0.1315,
+    "tail_01": 0.0998,
+    "tail_02": 0.0979,
+    "tail_03": 0.1033,
+    "tail_04": 0.1041,
+    "thigh.L": 0.2196,
+    "shin.L": 0.1732,
+    "hind_foot.L": 0.1126,
+    "hind_toe.L": 0.1037,
+    "thigh.R": 0.2196,
+    "shin.R": 0.1732,
+    "hind_foot.R": 0.1126,
+    "hind_toe.R": 0.1037
+  },
+  "weights": {
+    "proxy_faces": 19438,
+    "proxy_unweighted": 0,
+    "filled_nearest_bone": 0,
+    "restricted_verts": {
+      "ear.L": 6176,
+      "ear.R": 5892,
+      "opposite_leg": 2180
+    },
+    "seam_smoothing": {
+      "iterations": 4,
+      "strength": 0.35,
+      "welded_positions": 15582
+    }
+  },
+  "static": {
+    "unweighted_verts": 0,
+    "empty_bone_groups": [
+      "tail_01"
+    ],
+    "issues": []
+  },
+  "clips": {
+    "Idle": {
+      "frames": 73,
+      "lowest_z_range": [
+        -0.0049,
+        0.0
+      ],
+      "edge_stretch_p99": 0.148,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 73,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.0049,
+          0.00494
+        ],
+        "front.R": [
+          -0.00492,
+          0.00492
+        ],
+        "hind.L": [
+          2e-05,
+          2e-05
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.024404,
+      "issues": [],
+      "loop": true
+    },
+    "Walk": {
+      "frames": 25,
+      "lowest_z_range": [
+        -0.0078,
+        0.0115
+      ],
+      "edge_stretch_p99": 0.42,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 25,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.00235,
+          0.03787
+        ],
+        "front.R": [
+          -0.00229,
+          0.03779
+        ],
+        "hind.L": [
+          -0.0078,
+          0.05082
+        ],
+        "hind.R": [
+          -0.00761,
+          0.05095
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.053945,
+      "issues": [],
+      "loop": true
+    },
+    "Trot": {
+      "frames": 17,
+      "lowest_z_range": [
+        -0.0073,
+        0.012
+      ],
+      "edge_stretch_p99": 0.391,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 17,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.00621,
+          0.06099
+        ],
+        "front.R": [
+          -0.00642,
+          0.06092
+        ],
+        "hind.L": [
+          -0.00733,
+          0.06296
+        ],
+        "hind.R": [
+          -0.00723,
+          0.0631
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.12976,
+      "issues": [],
+      "loop": true
+    },
+    "Greet": {
+      "frames": 49,
+      "lowest_z_range": [
+        0.0,
+        0.0
+      ],
+      "edge_stretch_p99": 0.972,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 49,
+      "foot_z_ranges": {
+        "front.L": [
+          2e-05,
+          2e-05
+        ],
+        "front.R": [
+          0.0,
+          0.0
+        ],
+        "hind.L": [
+          2e-05,
+          2e-05
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.186879,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.972
+        }
+      ],
+      "loop": true
+    },
+    "PetHead": {
+      "frames": 49,
+      "lowest_z_range": [
+        0.0,
+        0.0
+      ],
+      "edge_stretch_p99": 0.672,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 49,
+      "foot_z_ranges": {
+        "front.L": [
+          2e-05,
+          2e-05
+        ],
+        "front.R": [
+          0.0,
+          0.0
+        ],
+        "hind.L": [
+          2e-05,
+          2e-05
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.11109,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.672
+        }
+      ],
+      "loop": false
+    },
+    "PetChin": {
+      "frames": 49,
+      "lowest_z_range": [
+        0.0,
+        0.0
+      ],
+      "edge_stretch_p99": 0.665,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 49,
+      "foot_z_ranges": {
+        "front.L": [
+          2e-05,
+          2e-05
+        ],
+        "front.R": [
+          0.0,
+          0.0
+        ],
+        "hind.L": [
+          2e-05,
+          2e-05
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.087196,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.665
+        }
+      ],
+      "loop": false
+    },
+    "PetBelly": {
+      "frames": 61,
+      "lowest_z_range": [
+        -0.0094,
+        0.0
+      ],
+      "edge_stretch_p99": 0.724,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 61,
+      "foot_z_ranges": {
+        "front.L": [
+          2e-05,
+          0.00609
+        ],
+        "front.R": [
+          -0.00938,
+          0.0
+        ],
+        "hind.L": [
+          2e-05,
+          0.07219
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.097617,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.724
+        }
+      ],
+      "loop": false
+    },
+    "HeadTilt": {
+      "frames": 37,
+      "lowest_z_range": [
+        0.0,
+        0.0
+      ],
+      "edge_stretch_p99": 0.244,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 37,
+      "foot_z_ranges": {
+        "front.L": [
+          2e-05,
+          2e-05
+        ],
+        "front.R": [
+          0.0,
+          0.0
+        ],
+        "hind.L": [
+          2e-05,
+          2e-05
+        ],
+        "hind.R": [
+          1e-05,
+          1e-05
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.019188,
+      "issues": [],
+      "loop": false
+    },
+    "SitDown": {
+      "frames": 19,
+      "lowest_z_range": [
+        -0.0168,
+        0.0028
+      ],
+      "edge_stretch_p99": 1.664,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 19,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.00491,
+          0.00679
+        ],
+        "front.R": [
+          -0.00504,
+          0.00676
+        ],
+        "hind.L": [
+          -0.01677,
+          0.00298
+        ],
+        "hind.R": [
+          -0.01676,
+          0.00285
+        ]
+      },
+      "endpoint_max_delta": 0.491947,
+      "max_frame_vertex_step": 0.055283,
+      "issues": [
+        {
+          "code": "GROUND_PENETRATION",
+          "min_z": -0.0168
+        },
+        {
+          "code": "STRETCH",
+          "ratio": 1.664
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.L",
+          "range": [
+            -0.01677,
+            0.00298
+          ]
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.R",
+          "range": [
+            -0.01676,
+            0.00285
+          ]
+        }
+      ],
+      "loop": false
+    },
+    "SitIdle": {
+      "frames": 49,
+      "lowest_z_range": [
+        -0.01,
+        -0.0002
+      ],
+      "edge_stretch_p99": 1.664,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 49,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.00993,
+          -0.00015
+        ],
+        "front.R": [
+          -0.00999,
+          -0.00022
+        ],
+        "hind.L": [
+          0.00293,
+          0.00293
+        ],
+        "hind.R": [
+          0.00284,
+          0.00284
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.001702,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 1.664
+        }
+      ],
+      "loop": true
+    },
+    "StandUp": {
+      "frames": 16,
+      "lowest_z_range": [
+        -0.0168,
+        0.0028
+      ],
+      "edge_stretch_p99": 1.664,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 16,
+      "foot_z_ranges": {
+        "front.L": [
+          -0.00491,
+          0.0068
+        ],
+        "front.R": [
+          -0.00504,
+          0.00676
+        ],
+        "hind.L": [
+          -0.01675,
+          0.00299
+        ],
+        "hind.R": [
+          -0.01676,
+          0.00285
+        ]
+      },
+      "endpoint_max_delta": 0.491947,
+      "max_frame_vertex_step": 0.055044,
+      "issues": [
+        {
+          "code": "GROUND_PENETRATION",
+          "min_z": -0.0168
+        },
+        {
+          "code": "STRETCH",
+          "ratio": 1.664
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.L",
+          "range": [
+            -0.01675,
+            0.00299
+          ]
+        },
+        {
+          "code": "FOOT_CONTACT",
+          "foot": "hind.R",
+          "range": [
+            -0.01676,
+            0.00285
+          ]
+        }
+      ],
+      "loop": false
+    },
+    "LieDown": {
+      "frames": 49,
+      "lowest_z_range": [
+        -0.0003,
+        0.001
+      ],
+      "edge_stretch_p99": 0.699,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 49,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00054,
+          0.00117
+        ],
+        "front.R": [
+          0.00055,
+          0.0012
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.476205,
+      "max_frame_vertex_step": 0.017761,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.699
+        }
+      ],
+      "loop": false
+    },
+    "LieIdle": {
+      "frames": 73,
+      "lowest_z_range": [
+        0.0005,
+        0.001
+      ],
+      "edge_stretch_p99": 0.714,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 73,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00049,
+          0.00136
+        ],
+        "front.R": [
+          0.00108,
+          0.00132
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.001537,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.714
+        }
+      ],
+      "loop": true
+    },
+    "Sleep": {
+      "frames": 97,
+      "lowest_z_range": [
+        0.0005,
+        0.001
+      ],
+      "edge_stretch_p99": 0.819,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 97,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00049,
+          0.00135
+        ],
+        "front.R": [
+          0.00108,
+          0.00132
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.0,
+      "max_frame_vertex_step": 0.001175,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.819
+        }
+      ],
+      "loop": true
+    },
+    "GetUp": {
+      "frames": 37,
+      "lowest_z_range": [
+        -0.0002,
+        0.001
+      ],
+      "edge_stretch_p99": 0.699,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 37,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00053,
+          0.00119
+        ],
+        "front.R": [
+          0.00055,
+          0.00119
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.476205,
+      "max_frame_vertex_step": 0.023683,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.699
+        }
+      ],
+      "loop": false
+    },
+    "FallAsleep": {
+      "frames": 25,
+      "lowest_z_range": [
+        0.001,
+        0.001
+      ],
+      "edge_stretch_p99": 0.811,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 25,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00112,
+          0.00112
+        ],
+        "front.R": [
+          0.00112,
+          0.00112
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.251226,
+      "max_frame_vertex_step": 0.015896,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.811
+        }
+      ],
+      "loop": false
+    },
+    "WakeUp": {
+      "frames": 25,
+      "lowest_z_range": [
+        0.001,
+        0.001
+      ],
+      "edge_stretch_p99": 0.811,
+      "stretch_reference": "bind_pose",
+      "sampled_frames": 25,
+      "foot_z_ranges": {
+        "front.L": [
+          0.00112,
+          0.00112
+        ],
+        "front.R": [
+          0.00112,
+          0.00112
+        ],
+        "hind.L": [
+          0.001,
+          0.001
+        ],
+        "hind.R": [
+          0.001,
+          0.001
+        ]
+      },
+      "endpoint_max_delta": 0.251226,
+      "max_frame_vertex_step": 0.015896,
+      "issues": [
+        {
+          "code": "STRETCH",
+          "ratio": 0.811
+        }
+      ],
+      "loop": false
+    }
+  },
+  "contact_corrections": {
+    "SitDown": {
+      "method": "straight_arm_pose_solver",
+      "iterations_limit": 10
+    },
+    "SitIdle": {
+      "method": "straight_arm_pose_solver",
+      "iterations_limit": 10
+    },
+    "StandUp": {
+      "method": "straight_arm_pose_solver",
+      "iterations_limit": 10
+    },
+    "LieDown": {
+      "iterations_limit": 8,
+      "frames_at_limit": 0,
+      "max_pelvis_correction": 0
+    },
+    "LieIdle": {
+      "iterations_limit": 8,
+      "frames_at_limit": 0,
+      "max_pelvis_correction": 0
+    },
+    "Sleep": {
+      "iterations_limit": 8,
+      "frames_at_limit": 0,
+      "max_pelvis_correction": 0
+    },
+    "GetUp": {
+      "iterations_limit": 8,
+      "frames_at_limit": 0,
+      "max_pelvis_correction": 0
+    }
+  },
+  "ground_fit": {
+    "sit_theta": 12.0361,
+    "lift_lie": -0.3478
+  },
+  "output": "C:\\Users\\rksek\\Desktop\\dog-rig\\output_corrected\\m3_cream\\m3_cream_rigged.glb",
+  "quality": {
+    "accepted": false,
+    "issue_count": 19,
+    "requires_visual_review": true,
+    "automatic_correction_bounded": true
+  },
+  "status": "needs_review"
+}

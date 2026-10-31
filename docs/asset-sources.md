@@ -52,3 +52,12 @@
 - 모델 SHA-256: `9a73ced06ae170dfabf42b3e86905e76537a5d3606f8bbc75f5130c6e37c88f7`. 크기 3,775,776바이트, 메시 1·스킨 0·애니메이션 0.
 - ZIP 설명은 윤승희→이창민의 4면 v2, side/front/back/other 방향과 말티즈 팀원 사진·골든 공개 사진으로 기재한다. 별도 라이선스 원문은 없어 공개 재배포 허가로 해석하지 않는다.
 - 사용 범위: 사용자가 지시한 로컬 목 생성·4면 확인·정지 모델 표시. 새 Gemini·Meshy 전송은 하지 않는다. 기본 결과는 골든 4면+GLB이며 말티즈 사진과 이 모델을 일치하는 결과로 표시하지 않는다.
+
+## 표준 리깅·공용 동작 검증 자료
+
+- 2026-10-30 사용자 제공 `dog-rig.zip`, `dog_sounds.zip`. ZIP 및 선별 원본 SHA-256은 [입력 manifest](rig-input-manifest.json)에 기록했다.
+- 원본 소스·3체형·기존 보정 결과는 `blender/`에 선별 보존했다. 참고 문서의 과거 지시를 현재 사용자 승인으로 해석하지 않았다.
+- 파생물: Blender 4.2.0의 준비 메시·33뼈/17클립 GLB·mesh-free skeleton/animations 파일·Unity Generic 클립. 준비/재리깅은 원본과 다른 파일에 수행했다.
+- Unity 검증 후보는 `Assets/StreamingAssets/Validation/StandardRig/`, 공용 클립은 `Assets/Withme/Animations/StandardV1/`이다. 모델 3개 모두 품질 미승인이고 공개 제품 승인본이 아니다.
+- 효과음 ZIP의 OGG 20개는 기존 파일과 바이트가 같아 중복 반영하지 않았다. 기존 기본 효과음 출처는 위 항목을 유지한다.
+- 세부 출처·파생 경로·검증 한계는 [PC 검증 안내](../unity/docs/standard-rig-validation.md), [인수 결과](batch-acceptance.md)를 따른다.
